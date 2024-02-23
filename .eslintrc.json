@@ -1,0 +1,6 @@
+{
+  "extends": ["next/core-web-vitals", "plugin:unicorn/recommended"],
+  "rules": {
+    "no-unused-vars": "error"
+  }
+}
