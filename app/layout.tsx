@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import classNames from "classnames";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -11,7 +11,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body
+        className={classNames(
+          inter.className,
+          "bg-neutral-900 text-white max-w-screen-2xl mx-auto min-h-dvh",
+        )}
+      >
+        {children}
+      </body>
     </html>
   );
 }
