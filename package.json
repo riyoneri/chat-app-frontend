@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.1",
+    "@tanstack/react-query": "^5.22.2",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.10",
     "javascript-time-ago": "^2.5.9",
@@ -36,6 +37,7 @@
     "socket.io-client": "^4.7.4"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.20.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
