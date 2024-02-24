@@ -1,16 +1,24 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
+interface UserState {
+  userData?: {
+    _id: string;
+    username: string;
+    emoji: string;
+  };
+}
+
+const initialState: UserState = {};
+
 const userSlice = createSlice({
   name: "user",
-  initialState: {
-    user: { _id: "", username: "", emoji: "" },
-  },
+  initialState,
   reducers: {
     login(
       state,
       action: PayloadAction<{ _id: string; username: string; emoji: string }>,
     ) {
-      state.user = action.payload;
+      state.userData = action.payload;
     },
   },
 });
