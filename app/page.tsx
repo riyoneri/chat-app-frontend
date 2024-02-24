@@ -1,12 +1,34 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { redirect } from "next/navigation";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import Loader from "./componets/loader";
+import { useAppDispatch } from "./store/hooks";
+import { userActions } from "./store/user-slice";
+import { createUser } from "./util/fetchers";
 import getRandomEmoji from "./util/random-emoji";
 
 export default function Home() {
   const [currentIcon, setCurrentIcon] = useState("😄");
   const [username, setUsername] = useState("");
   const [formError, setFormError] = useState<string>("");
+  const dispatch = useAppDispatch();
+  const { isPending, error, data, mutate } = useMutation<
+    {
+      _id: string;
+      username: string;
+      emoji: string;
+      createdAt: string;
+    },
+    { message: { username: string; emoji: string } },
+    { username: string; emoji: string }
+  >({
+    mutationFn: (body) => createUser(body),
+  });
+  useEffect(() => {
+    setFormError(error?.message?.username ?? "");
+  }, [error]);
 
   function handleInputChange({ target }: ChangeEvent<HTMLInputElement>) {
     setFormError("");
@@ -21,7 +43,12 @@ export default function Home() {
   function handleFormSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!username) return setFormError("Enter username please!");
-    console.log("username is fine");
+    mutate({ username, emoji: currentIcon });
+  }
+
+  if (data) {
+    dispatch(userActions.login(data));
+    redirect("/dms");
   }
 
   return (
@@ -60,9 +87,17 @@ export default function Home() {
               Change Icon
             </button>
           </div>
-          <button className="hover:bg-blue-800 bg-blue-600 w-full mt-5 px-10 rounded-full py-1">
-            Join
-          </button>
+          {error && typeof error.message !== "object" && (
+            <p className="text-sm text-red-600 text-center">{error.message}</p>
+          )}
+          {
+            <button
+              disabled={isPending}
+              className="hover:bg-blue-800 bg-blue-600 w-full mt-5 px-10 rounded-full py-1"
+            >
+              {isPending ? <Loader className="size-4" /> : "Join"}
+            </button>
+          }
         </form>
       </main>
     </>
