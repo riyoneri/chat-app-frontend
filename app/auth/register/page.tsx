@@ -1,19 +1,63 @@
 "use client";
 
+import ImageInputLabel from "@/app/componets/input-labels/image-input-label";
+import PasswordInputLabel from "@/app/componets/input-labels/password-input-label";
+import TextInputLabel from "@/app/componets/input-labels/text-input-label";
+import { yupResolver } from "@hookform/resolvers/yup";
 import Link from "next/link";
-import { FormEvent, useState } from "react";
-import { IoEye, IoEyeOff } from "react-icons/io5";
+import { useForm } from "react-hook-form";
+import { mixed, object, string } from "yup";
+
+export interface RegisterFormData {
+  name: string;
+  email: string;
+  username: string;
+  image: FileList;
+  password: string;
+  confirmPassword: string;
+}
+
+const schema = object({
+  name: string().trim().required("Name is required"),
+  email: string()
+    .trim()
+    .required("E-mail address is required")
+    .email("E-mail address is invalid"),
+  username: string().trim().required("Username is required"),
+  image: mixed((input): input is FileList => input instanceof FileList)
+    .required("Image is required")
+    .test("file", "Image is required", (fileList) => fileList.length > 0)
+    .test("fileType", "The file must be an image", (fileList) =>
+      ["image/jpeg", "image/png", "image/jpg"].includes(
+        fileList[0]?.type.toLocaleLowerCase(),
+      ),
+    )
+    .test(
+      "fileSize",
+      "Image size must be less than or equal to 2MB",
+      (fileList) => fileList[0]?.size <= 2_000_000,
+    ),
+
+  password: string().required("Password is required"),
+  confirmPassword: string().required("Confirm password is required"),
+});
 
 export default function Register() {
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(schema) });
+
+  const onSubmit = (data: RegisterFormData) => console.log(data);
+
   return (
     <>
       <title>Register</title>
       <main className="min-h-dvh py-5 flex flex-col justify-center px-5">
         <form
-          onSubmit={(event: FormEvent<HTMLFormElement>) =>
-            event.preventDefault()
-          }
+          onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col w-full sm:w-1/2 lg:w-1/3 mx-auto"
         >
           <h1 className="text-xl lg:text-3xl">Create new account</h1>
@@ -24,53 +68,52 @@ export default function Register() {
             </Link>
           </p>
           <div className="mt-5 flex flex-col gap-2">
-            <input
-              type="text"
-              className="text-sm sm:w-auto bg-neutral-700 rounded-sm p-2 focus:outline-none"
+            <TextInputLabel
               name="name"
-              placeholder="Name"
-            />
-            <p className="text-red-500 text-sm px-1 -mt-2">Error</p>
-            <input
+              placeHolder="Name"
+              register={register}
               type="text"
-              className="text-sm sm:w-auto bg-neutral-700 rounded-sm p-2 focus:outline-none"
+              error={errors.name?.message}
+            />
+
+            <TextInputLabel
               name="email"
-              placeholder="Email"
+              placeHolder="Email"
+              register={register}
+              type="email"
+              error={errors.email?.message}
             />
-            <p className="text-red-500 text-sm px-1 -mt-2">Error</p>
-            <input
-              type="text"
-              className="flex-1 text-sm sm:w-auto bg-neutral-700 rounded-sm p-2 focus:outline-none"
+
+            <TextInputLabel
               name="username"
-              placeholder="Username"
+              placeHolder="Username"
+              register={register}
+              type="text"
+              error={errors.username?.message}
             />
-            <p className="text-red-500 text-sm px-1 -mt-2">Error</p>
-            <label
-              htmlFor="password"
-              className="flex text-sm bg-neutral-700 rounded-sm items-center p-2"
-            >
-              <input
-                type={passwordVisible ? "text" : "password"}
-                className="flex-1 min-w-1 sm:w-auto bg-transparent focus:outline-none"
-                name="password"
-                placeholder="Password"
-                id="password"
-              />
-              {passwordVisible ? (
-                <IoEyeOff
-                  size={20}
-                  className="cursor-pointer"
-                  onClick={() => setPasswordVisible(!passwordVisible)}
-                />
-              ) : (
-                <IoEye
-                  size={20}
-                  className="cursor-pointer"
-                  onClick={() => setPasswordVisible(!passwordVisible)}
-                />
-              )}
-            </label>
-            <p className="text-red-500 text-sm px-1 -mt-2">Error</p>
+
+            <ImageInputLabel
+              name="image"
+              placeHolder="Avatar image"
+              register={register}
+              error={errors.image?.message}
+              currentImage={watch("image")?.[0]}
+            />
+
+            <PasswordInputLabel
+              name="password"
+              placeHolder="Password"
+              register={register}
+              error={errors.password?.message}
+            />
+
+            <PasswordInputLabel
+              name="confirmPassword"
+              placeHolder="Confirm Password"
+              register={register}
+              error={errors.confirmPassword?.message}
+            />
+
             <button className="bg-sky-800 rounded-sm py-2">Register</button>
           </div>
         </form>
