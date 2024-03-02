@@ -6,7 +6,7 @@ import TextInputLabel from "@/app/componets/input-labels/text-input-label";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { mixed, object, string } from "yup";
+import { mixed, object, ref, string } from "yup";
 
 export interface RegisterFormData {
   name: string;
@@ -38,8 +38,16 @@ const schema = object({
       (fileList) => fileList[0]?.size <= 2_000_000,
     ),
 
-  password: string().required("Password is required"),
-  confirmPassword: string().required("Confirm password is required"),
+  password: string()
+    .required("Password is required")
+    .matches(/\d/, "Password must contain atleast one number")
+    .matches(/[A-Z]/, "Password must contain uppercase character")
+    .matches(/[a-z]/, "Password must contain lowercase character")
+    .matches(/\W/, "Password must contain special character")
+    .min(8, "Password must be 8+ characters"),
+  confirmPassword: string()
+    .required("Confirm password is required")
+    .oneOf([ref("password")], "Passwords dont match"),
 });
 
 export default function Register() {
