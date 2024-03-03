@@ -9,7 +9,14 @@ const config: Config = {
     "node_modules/@material-tailwind/react/theme/components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        "ui-dark": "#26272D",
+        "ui-darker": "#1C1D22",
+        "ui-darkest": "#141416",
+        "border-dark": "#37393C",
+      },
+    },
   },
   plugins: [tailwindScrollbar],
 };
