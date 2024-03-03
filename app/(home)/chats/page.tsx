@@ -6,6 +6,8 @@ export const metadata: Metadata = {
 
 export default function Chats() {
   return (
-    <div className="grid place-content-center h-full">No Opened chats</div>
+    <div className="sm:grid place-content-center h-full hidden">
+      No Opened chats
+    </div>
   );
 }
