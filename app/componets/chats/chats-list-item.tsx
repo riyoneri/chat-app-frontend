@@ -6,6 +6,7 @@ import ReactTimeAgo from "react-time-ago";
 import { Chat } from "./chats-list";
 import classNames from "classnames";
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 TimeAgo.addDefaultLocale(en);
 
 export default function ChatListItem({
@@ -15,6 +16,12 @@ export default function ChatListItem({
   unreadMessages,
 }: Chat) {
   const parameters = useParams();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => setIsMounted(true), []);
+
+  if (!isMounted) return;
+
   return (
     <Link
       href={`/chats/${_id}`}
@@ -31,7 +38,11 @@ export default function ChatListItem({
         <p className="text-neutral-200 line-clamp-1">{`${ownerId === "1" ? "You: " : ""}${text}`}</p>
       </div>
       <div className="flex text-xs flex-col justify-between items-end ">
-        <ReactTimeAgo date={new Date(createdAt)} timeStyle="twitter" />
+        <ReactTimeAgo
+          tooltip={false}
+          date={new Date(createdAt)}
+          timeStyle="twitter"
+        />
         {unreadMessages > 0 && (
           <span className="size-5  grid place-content-center bg-orange-200 text-black rounded-full">
             {unreadMessages > 9 ? "9+" : unreadMessages}

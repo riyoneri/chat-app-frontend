@@ -53,10 +53,10 @@ const Chats: Chat[] = [
 
 export default function ChatList() {
   return (
-    <section className="text-sm *:px-2 scrollbar-none *:py-3 sm:h-[calc(100dvh-8.4rem)] overflow-y-auto space-y-1">
+    <div className="text-sm *:px-2 *:py-3 space-y-1">
       {Chats.map((chat) => (
         <ChatListItem {...chat} key={chat._id} />
       ))}
-    </section>
+    </div>
   );
 }
