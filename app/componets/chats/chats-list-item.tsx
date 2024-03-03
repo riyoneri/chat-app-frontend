@@ -1,46 +1,40 @@
-"use client";
-
-import UserIcon from "../user-icon";
-import { Chat } from "@/app/(home)/layout";
+import { Avatar, Badge } from "@material-tailwind/react";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 import ReactTimeAgo from "react-time-ago";
+import { Chat } from "./chats-list";
+import classNames from "classnames";
+import { useParams } from "next/navigation";
 TimeAgo.addDefaultLocale(en);
 
 export default function ChatListItem({
   _id,
-  imageUrl,
-  lastMessageDate,
-  message,
-  newMessageCount,
-  username,
+  participant: { imageUrl, name },
+  lastMessage: { createdAt, ownerId, text },
+  unreadMessages,
 }: Chat) {
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-  const pathname = usePathname();
-
-  if (!isMounted) return;
-
+  const parameters = useParams();
   return (
     <Link
-      href={pathname.includes("groups") ? `/groups/${_id}` : `/dms/${_id}`}
-      className="flex gap-1 sm:gap-3 py-3 px-1 bg-blue-700/25 "
+      href={`/chats/${_id}`}
+      className={classNames("flex gap-3 hover:bg-ui-darkest transition", {
+        "bg-ui-darkest": parameters.chatId === _id,
+      })}
     >
-      <UserIcon icon={imageUrl} className="size-8 sm:size-12" />
-      <div className="flex-1 flex flex-col justify-between">
-        <p className="line-clamp-1 font-bold">{username}</p>
-        <p className="line-clamp-1">{message}</p>
+      <Badge color="green" overlap="circular" placement="bottom-end">
+        <Avatar src={imageUrl} alt="Avatar" placeholder={undefined} size="md" />
+      </Badge>
+
+      <div className="flex flex-col flex-1 justify-between">
+        <p className="font-bold">{name}</p>
+        <p className="text-neutral-200 line-clamp-1">{`${ownerId === "1" ? "You: " : ""}${text}`}</p>
       </div>
-      <div className="flex flex-col text-xs justify-between items-end">
-        <ReactTimeAgo date={new Date(lastMessageDate)} timeStyle="twitter" />
-        {newMessageCount && (
-          <span className="bg-red-500 size-4 rounded-full grid place-content-center">
-            {newMessageCount}
+      <div className="flex text-xs flex-col justify-between items-end ">
+        <ReactTimeAgo date={new Date(createdAt)} timeStyle="twitter" />
+        {unreadMessages > 0 && (
+          <span className="size-5  grid place-content-center bg-orange-200 text-black rounded-full">
+            {unreadMessages > 9 ? "9+" : unreadMessages}
           </span>
         )}
       </div>
