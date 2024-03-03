@@ -1,29 +1,28 @@
-import { RegisterFormData } from "@/app/auth/register/page";
-import { UseFormRegister } from "react-hook-form";
+import { FieldValues, Path, UseFormRegister } from "react-hook-form";
 
-interface TextInputLabelProperties {
-  name: keyof RegisterFormData;
+interface TextInputLabelProperties<T extends FieldValues> {
+  name: keyof T;
   type: "text" | "email";
   placeHolder: string;
-  register: UseFormRegister<RegisterFormData>;
+  register: UseFormRegister<T>;
   error?: string;
 }
 
-export default function TextInputLabel({
+export default function TextInputLabel<T extends FieldValues>({
   name,
   type,
   placeHolder,
   register,
   error,
-}: TextInputLabelProperties) {
+}: TextInputLabelProperties<T>) {
   return (
-    <label htmlFor={name} className="flex flex-col">
+    <label htmlFor={String(name)} className="flex flex-col">
       <input
         type={type}
         className="text-sm sm:w-auto bg-neutral-700 rounded-sm p-2 focus:outline-none"
         placeholder={placeHolder}
-        id={name}
-        {...register(name)}
+        id={String(name)}
+        {...register(name as Path<T>)}
       />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </label>
