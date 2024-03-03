@@ -1,20 +1,17 @@
 import classNames from "classnames";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import UserIcon from "../user-icon";
+import MessageSVG from "./message-svg";
 import { Message } from "./messages-list";
-import { useAppSelector } from "@/app/store/hooks";
 
 dayjs.extend(relativeTime);
 
 export default function MessagesListItem({
-  _id,
-  chatId,
   createdAt,
-  sender,
+  senderId,
   text,
-}: Message) {
-  const userId = useAppSelector((state) => state.user.userData?._id);
+  displayDate,
+}: Message & { displayDate?: boolean }) {
   const now = dayjs();
   const messageDate = dayjs(createdAt);
 
@@ -22,49 +19,34 @@ export default function MessagesListItem({
     ? messageDate.from(now)
     : messageDate.format("MM/DD/YYYY");
 
-  const isOwner = userId === sender;
+  const isMesssageIncoming = senderId !== "1";
 
   return (
     <div
-      className={classNames(
-        "grid gap-1 text-xs sm:text-sm w-full sm:max-w-[70%]",
-        {
-          "self-end": isOwner,
-        },
-      )}
+      className={classNames("flex items-start max-w-[90%] sm:max-w-[70%]", {
+        "flex-row-reverse self-end": !isMesssageIncoming,
+      })}
     >
-      <div
-        className={classNames(
-          "grid p-2 text-balance sm:p-5 rounded-md sm:rounded-xl row-span-2 col-span-10",
-          {
-            "bg-custom-indigo bg-blue-600 rounded-ee-none": isOwner,
-            "bg-neutral-700 text-custom-indigo rounded-es-none col-start-2":
-              !isOwner,
-          },
+      <MessageSVG incoming={isMesssageIncoming} />
+      <div>
+        <div
+          className={classNames("rounded-md px-2 py-1 flex-1", {
+            "bg-neutral-700 rounded-ss-none": isMesssageIncoming,
+            "bg-message-out text-black rounded-se-none": !isMesssageIncoming,
+          })}
+        >
+          {text}
+        </div>
+        {displayDate && (
+          <p
+            className={classNames("text-xs px-1", {
+              "text-end": !isMesssageIncoming,
+            })}
+          >
+            {timeString}
+          </p>
         )}
-      >
-        {text}
       </div>
-      <UserIcon
-        icon="😭"
-        className={classNames(
-          "size-8 sm:size-10 place-self-center border-neutral-600 row-end-3 bg-custom-indigo/40",
-          {
-            "col-start-11 ": isOwner,
-          },
-        )}
-      />
-      <span
-        className={classNames(
-          "col-span-10 row-start-3 text-neutral-600 my-2 text-xs",
-          {
-            "col-start-2": !isOwner,
-            "text-end": isOwner,
-          },
-        )}
-      >
-        {timeString}
-      </span>
     </div>
   );
 }
