@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { mixed, object, ref, string } from "yup";
 
-interface RegisterFormData {
+export interface RegisterFormData {
   name: string;
   email: string;
   username: string;
