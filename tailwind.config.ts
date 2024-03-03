@@ -15,6 +15,7 @@ const config: Config = {
         "ui-darker": "#1C1D22",
         "ui-darkest": "#141416",
         "border-dark": "#37393C",
+        "message-out": "#BDD2B6",
       },
     },
   },
