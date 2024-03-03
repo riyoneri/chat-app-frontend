@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { mixed, object, ref, string } from "yup";
 
-export interface RegisterFormData {
+interface RegisterFormData {
   name: string;
   email: string;
   username: string;
@@ -50,6 +50,8 @@ const schema = object({
     .oneOf([ref("password")], "Passwords dont match"),
 });
 
+const onSubmit = (data: RegisterFormData) => console.log(data);
+
 export default function Register() {
   const {
     register,
@@ -57,8 +59,6 @@ export default function Register() {
     watch,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
-
-  const onSubmit = (data: RegisterFormData) => console.log(data);
 
   return (
     <>
