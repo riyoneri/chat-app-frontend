@@ -1,32 +1,31 @@
-import { RegisterFormData } from "@/app/auth/register/page";
 import { useState } from "react";
-import { UseFormRegister } from "react-hook-form";
+import { FieldValues, Path, UseFormRegister } from "react-hook-form";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 
-interface PasswordInputLabelProperties {
-  name: keyof RegisterFormData;
+interface PasswordInputLabelProperties<T extends FieldValues> {
+  name: keyof T;
   placeHolder: string;
-  register: UseFormRegister<RegisterFormData>;
+  register: UseFormRegister<T>;
   error?: string;
 }
 
-export default function PasswordInputLabel({
+export default function PasswordInputLabel<T extends FieldValues>({
   name,
   placeHolder,
   register,
   error,
-}: PasswordInputLabelProperties) {
+}: PasswordInputLabelProperties<T>) {
   const [displayPassword, setDisplayPassword] = useState(false);
 
   return (
-    <label htmlFor={name} className="text-sm">
+    <label htmlFor={String(name)} className="text-sm">
       <div className="flex bg-neutral-700 rounded-sm items-center p-2">
         <input
           type={displayPassword ? "text" : "password"}
           className="flex-1 min-w-1 sm:w-auto bg-transparent focus:outline-none"
           placeholder={placeHolder}
-          id={name}
-          {...register(name)}
+          id={String(name)}
+          {...register(name as Path<T>)}
         />
         {displayPassword ? (
           <IoEyeOff
