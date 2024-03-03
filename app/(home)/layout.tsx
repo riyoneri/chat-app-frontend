@@ -1,19 +1,13 @@
-"use client";
-
 import { ReactNode } from "react";
-import NavBar from "../componets/navbar";
-// import { redirect } from "next/navigation";
-// import { useAppSelector } from "../store/hooks";
 
-export default function HomeLayout({
+import NavBar from "../componets/navbar";
+
+export default function ProtectedLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
-  // const user = useAppSelector((state) => state.user);
-  // if (!user.userData) return redirect("/");
-
   return (
     <main className="flex flex-col min-h-dvh">
-      {children}
+      <section className="flex-1">{children}</section>
       <NavBar />
     </main>
   );
