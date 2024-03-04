@@ -1,12 +1,12 @@
 import { Avatar, Badge } from "@material-tailwind/react";
+import classNames from "classnames";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import Link from "next/link";
-import ReactTimeAgo from "react-time-ago";
-import { Chat } from "./chats-list";
-import classNames from "classnames";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import ReactTimeAgo from "react-time-ago";
+import { Chat } from "./chats-list";
 TimeAgo.addDefaultLocale(en);
 
 export default function ChatListItem({
