@@ -39,7 +39,7 @@ export default function ChatsLayout({
             placeholder={undefined}
             size="sm"
           />
-          <Link href="">
+          <Link href="/chats/new">
             <LuMessageSquarePlus />
           </Link>
         </div>
@@ -73,7 +73,7 @@ export default function ChatsLayout({
               placeholder={undefined}
               size="sm"
             />
-            <Link href="">
+            <Link href="/chats/new">
               <LuMessageSquarePlus />
             </Link>
           </div>
