@@ -3,8 +3,15 @@
 import ImageInputLabel from "@/app/componets/input-labels/image-input-label";
 import PasswordInputLabel from "@/app/componets/input-labels/password-input-label";
 import TextInputLabel from "@/app/componets/input-labels/text-input-label";
+import { UserDto } from "@/app/util/api";
+import { createUser } from "@/app/util/fetchers";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Spinner } from "@material-tailwind/react";
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSnackbar } from "notistack";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { mixed, object, ref, string } from "yup";
 
@@ -15,6 +22,10 @@ export interface RegisterFormData {
   image: FileList;
   password: string;
   confirmPassword: string;
+}
+
+interface ErrorData extends Omit<RegisterFormData, "image"> {
+  image: string;
 }
 
 const schema = object({
@@ -50,15 +61,53 @@ const schema = object({
     .oneOf([ref("password")], "Passwords dont match"),
 });
 
-const onSubmit = (data: RegisterFormData) => console.log(data);
-
 export default function Register() {
   const {
     register,
     handleSubmit,
     watch,
+    setError,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
+  const { replace } = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const { data, error, isPending, mutate } = useMutation<
+    UserDto,
+    {
+      message: ErrorData | string;
+    },
+    FormData
+  >({
+    mutationFn: (body) => createUser(body),
+  });
+
+  useEffect(() => {
+    if (error && typeof error.message === "object") {
+      for (let key in error.message) {
+        const errorProperty = key as keyof ErrorData;
+        setError(errorProperty, { message: error.message[errorProperty] });
+      }
+    }
+
+    if (data) {
+      enqueueSnackbar("Yay, You can now login", { variant: "success" });
+      replace("/auth/login");
+    }
+  }, [error, data, setError, enqueueSnackbar, replace]);
+
+  const onSubmit = (data: RegisterFormData) => {
+    const formData = new FormData();
+
+    for (let key in data) {
+      const dataProperty = key as keyof RegisterFormData;
+      if (dataProperty === "image")
+        formData.append(dataProperty, data[dataProperty][0]);
+      else formData.append(dataProperty, data[dataProperty]);
+    }
+
+    mutate(formData);
+  };
 
   return (
     <>
@@ -122,7 +171,18 @@ export default function Register() {
               error={errors.confirmPassword?.message}
             />
 
-            <button className="bg-sky-800 rounded-sm py-2">Register</button>
+            {typeof error?.message === "string" && (
+              <p className="text-center text-sm text-red-500">
+                An error occured. Try again later
+              </p>
+            )}
+
+            <button
+              className="bg-sky-800 rounded-sm py-2 flex justify-center"
+              disabled={isPending}
+            >
+              {isPending ? <Spinner fontSize={40} /> : "Register"}
+            </button>
           </div>
         </form>
       </main>
