@@ -1,12 +1,9 @@
-const API_URL = "http://127.0.0.1:5000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const createUser = async (body: { [key: string]: string }) => {
-  const response = await fetch(`${API_URL}/users`, {
+export const createUser = async (body: FormData) => {
+  const response = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
-    body: JSON.stringify(body),
-    headers: {
-      "Content-Type": "application/json",
-    },
+    body,
   });
 
   const data = await response.json();
