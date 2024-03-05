@@ -7,3 +7,8 @@ export interface UserDto {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export interface AuthenticateUserDto {
+  user: UserDto;
+  token: string;
+}
