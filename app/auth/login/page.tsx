@@ -6,7 +6,7 @@ import { authActions } from "@/app/store/auth-slice";
 import { useAppDispatch } from "@/app/store/hooks";
 import { AuthenticateUserDto } from "@/app/util/api";
 import { authenticateUser } from "@/app/util/fetchers";
-import { encrypt } from "@/app/util/security-hash";
+import { encryptObject } from "@/app/util/security-hash";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Spinner } from "@material-tailwind/react";
 import { useMutation } from "@tanstack/react-query";
@@ -62,7 +62,7 @@ export default function Login() {
     }
 
     if (data) {
-      const cipheredUser = encrypt(JSON.stringify(data.user));
+      const cipheredUser = encryptObject(JSON.stringify(data.user));
       setUser(cipheredUser);
       setToken(data.token);
       dispatch(authActions.login(data));
