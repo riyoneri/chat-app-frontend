@@ -6,6 +6,7 @@ import classNames from "classnames";
 import { Inter } from "next/font/google";
 import { useState } from "react";
 import { Provider } from "react-redux";
+import { SnackbarProvider } from "notistack";
 import "./globals.css";
 import store from "./store";
 
@@ -23,14 +24,22 @@ export default function RootLayout({
       <Provider store={store}>
         <QueryClientProvider client={client}>
           <ThemeProvider>
-            <body
-              className={classNames(
-                inter.className,
-                "bg-ui-darkest text-white max-w-screen-2xl mx-auto min-h-dvh",
-              )}
+            <SnackbarProvider
+              maxSnack={3}
+              hideIconVariant
+              autoHideDuration={3500}
+              preventDuplicate
+              anchorOrigin={{ horizontal: "right", vertical: "top" }}
             >
-              {children}
-            </body>
+              <body
+                className={classNames(
+                  inter.className,
+                  "bg-ui-darkest text-white max-w-screen-2xl mx-auto min-h-dvh",
+                )}
+              >
+                {children}
+              </body>
+            </SnackbarProvider>
           </ThemeProvider>
         </QueryClientProvider>
       </Provider>
