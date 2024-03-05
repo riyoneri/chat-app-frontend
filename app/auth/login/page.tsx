@@ -2,15 +2,28 @@
 
 import PasswordInputLabel from "@/app/componets/input-labels/password-input-label";
 import TextInputLabel from "@/app/componets/input-labels/text-input-label";
+import { authActions } from "@/app/store/auth-slice";
+import { useAppDispatch } from "@/app/store/hooks";
+import { AuthenticateUserDto } from "@/app/util/api";
+import { authenticateUser } from "@/app/util/fetchers";
+import { encrypt } from "@/app/util/security-hash";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Spinner } from "@material-tailwind/react";
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSnackbar } from "notistack";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useLocalStorage } from "usehooks-ts";
 import { object, string } from "yup";
 
-interface LoginFormData {
+export interface LoginFormData {
   emailOrUsername: string;
   password: string;
 }
+
+interface ErrorData extends LoginFormData {}
 
 const schema = object({
   emailOrUsername: string()
@@ -19,14 +32,59 @@ const schema = object({
   password: string().required("Password is required"),
 });
 
-const onSubmit = (data: LoginFormData) => console.log(data);
-
 export default function Login() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
+  const { replace } = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
+  const dispatch = useAppDispatch();
+  const [, setToken] = useLocalStorage("_n", "");
+  const [, setUser] = useLocalStorage("_e", "");
+
+  const { data, error, isPending, mutate } = useMutation<
+    AuthenticateUserDto,
+    {
+      message: ErrorData | string;
+    },
+    LoginFormData
+  >({ mutationFn: (body) => authenticateUser(body) });
+
+  useEffect(() => {
+    if (error && typeof error.message === "object") {
+      for (let key in error.message) {
+        const errorProperty = key as keyof ErrorData;
+        setError(errorProperty, { message: error.message[errorProperty] });
+      }
+    }
+
+    if (data) {
+      const cipheredUser = encrypt(JSON.stringify(data.user));
+      setUser(cipheredUser);
+      setToken(data.token);
+      dispatch(authActions.login(data));
+      enqueueSnackbar(`Welcome back ${data.user.username}`, {
+        variant: "success",
+      });
+      replace("/chats");
+    }
+  }, [
+    data,
+    dispatch,
+    enqueueSnackbar,
+    error,
+    replace,
+    setError,
+    setToken,
+    setUser,
+  ]);
+
+  const onSubmit = (data: LoginFormData) => {
+    mutate(data);
+  };
 
   return (
     <>
@@ -59,7 +117,17 @@ export default function Login() {
               error={errors.password?.message}
             />
 
-            <button className="bg-sky-800 rounded-sm py-2">Login</button>
+            {typeof error?.message === "string" && (
+              <p className="text-center text-sm text-red-500">
+                {error.message}
+              </p>
+            )}
+            <button
+              className="bg-sky-800 rounded-sm py-2 flex justify-center"
+              disabled={isPending}
+            >
+              {isPending ? <Spinner fontSize={40} /> : "Login"}
+            </button>
           </div>
         </form>
       </main>
