@@ -13,15 +13,14 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    login(state, action: PayloadAction<Omit<AuthState, "isAuthenticated">>) {
-      state = { ...action.payload, isAuthenticated: true };
-      return state;
-    },
-    logout(state) {
-      delete state.token;
-      delete state.user;
-      state.isAuthenticated = false;
-    },
+    login: (
+      state,
+      action: PayloadAction<Omit<AuthState, "isAuthenticated">>,
+    ) => ({
+      ...action.payload,
+      isAuthenticated: !!(action.payload?.token && action.payload?.user),
+    }),
+    logout: () => initialState,
   },
 });
 
