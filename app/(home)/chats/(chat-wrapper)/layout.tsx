@@ -18,6 +18,7 @@ export default function ChatsLayout({
     (state) => state.ui.rightSideBarOpened,
   );
   const appDispatch = useDispatch();
+  const userImage = useAppSelector((state) => state.auth.user?.imageUrl);
   const pathname = usePathname();
 
   return (
@@ -34,7 +35,7 @@ export default function ChatsLayout({
       >
         <div className="flex px-2 justify-between items-center text-2xl">
           <Avatar
-            src="https://docs.material-tailwind.com/img/face-2.jpg"
+            src={userImage}
             alt="Avatar"
             placeholder={undefined}
             size="sm"
