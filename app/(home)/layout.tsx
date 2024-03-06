@@ -32,7 +32,7 @@ export default function ProtectedLayout({
     if (!data) {
       setCipheredUser(undefined);
       setToken(undefined);
-      enqueueSnackbar("Login first", { variant: "error" });
+      enqueueSnackbar("Login first", { variant: "error", key: 2 });
       redirect("/auth/login");
     }
   }, [data, enqueueSnackbar, setCipheredUser, setToken]);
