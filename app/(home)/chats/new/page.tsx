@@ -1,10 +1,14 @@
 "use client";
 
 import NewChatListItem from "@/app/componets/new-chat-list-item";
-import { IconButton } from "@material-tailwind/react";
+import { UserDto } from "@/app/util/api";
+import { getAllUsers } from "@/app/util/fetchers";
+import { IconButton, Spinner } from "@material-tailwind/react";
+import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaCircleArrowLeft, FaCircleArrowRight } from "react-icons/fa6";
+import { useLocalStorage } from "usehooks-ts";
 
 export interface NewChat {
   _id: string;
@@ -13,23 +17,21 @@ export interface NewChat {
   username: string;
 }
 
-const NewChats: NewChat[] = [
-  {
-    _id: "1",
-    imageUrl: "https://docs.material-tailwind.com/img/face-2.jpg",
-    name: "Lionel Kaneza",
-    username: "riyoneri",
-  },
-  {
-    _id: "2",
-    imageUrl: "https://docs.material-tailwind.com/img/face-2.jpg",
-    name: "Lionel Muller",
-    username: "riyoneri",
-  },
-];
-
 export default function NewChat() {
   const [active, setActive] = useState(1);
+  const { isLoading, data, error } = useQuery<UserDto[], Error>({
+    queryFn: () => getAllUsers(),
+    queryKey: ["users"],
+  });
+  const [, setToken] = useLocalStorage("_n", "");
+  const [, setCipheredUser] = useLocalStorage("_e", "");
+
+  useEffect(() => {
+    if (error?.message === "401") {
+      setToken("");
+      setCipheredUser("");
+    }
+  }, [error, setCipheredUser, setToken]);
 
   const getItemProperties = (index: number) =>
     ({
@@ -58,28 +60,38 @@ export default function NewChat() {
         <h2 className="text-2xl text-center">All Users</h2>
 
         <div className="mt-5 text-xs sm:text-sm space-y-2">
-          {NewChats.map((newChat) => (
-            <NewChatListItem {...newChat} key={newChat._id} />
-          ))}
+          {isLoading && <Spinner className="mx-auto" />}
+          {data &&
+            data.map((newChat) => (
+              <NewChatListItem {...newChat} key={newChat._id} />
+            ))}
         </div>
 
-        <div className="flex items-center justify-center gap-5 mt-2">
-          <button onClick={previous} disabled={active === 1}>
-            <FaCircleArrowLeft
-              className={classNames("text-2xl", {
-                "text-neutral-500": active === 1,
-              })}
-            />
-          </button>
-          <IconButton {...getItemProperties(2)}>{active}</IconButton>
-          <button onClick={next} disabled={active === 5}>
-            <FaCircleArrowRight
-              className={classNames("text-2xl", {
-                "text-neutral-500": active === 5,
-              })}
-            />
-          </button>
-        </div>
+        {!error && !isLoading && (
+          <div className="flex items-center justify-center gap-5 mt-2">
+            <button onClick={previous} disabled={active === 1}>
+              <FaCircleArrowLeft
+                className={classNames("text-2xl", {
+                  "text-neutral-500": active === 1,
+                })}
+              />
+            </button>
+            <IconButton {...getItemProperties(2)}>{active}</IconButton>
+            <button onClick={next} disabled={active === 5}>
+              <FaCircleArrowRight
+                className={classNames("text-2xl", {
+                  "text-neutral-500": active === 5,
+                })}
+              />
+            </button>
+          </div>
+        )}
+
+        {error?.message && (
+          <p className="text-center text-red-600 text-sm">
+            {error.message === "401" ? "" : error.message}
+          </p>
+        )}
       </div>
     </>
   );
