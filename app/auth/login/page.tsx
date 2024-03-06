@@ -68,6 +68,7 @@ export default function Login() {
       dispatch(authActions.login(data));
       enqueueSnackbar(`Welcome back ${data.user.username}`, {
         variant: "success",
+        key: "1",
       });
       replace("/chats");
     }

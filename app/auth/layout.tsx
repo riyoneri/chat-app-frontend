@@ -15,7 +15,10 @@ export default function UnProtectedLayout({
   useEffect(() => {
     setIsMounted(true);
     if (data) {
-      enqueueSnackbar("You are already logged in", { variant: "success" });
+      enqueueSnackbar("You are already logged in", {
+        variant: "success",
+        key: "1",
+      });
       redirect("/chats");
     }
   }, [data, enqueueSnackbar]);
