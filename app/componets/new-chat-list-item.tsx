@@ -1,7 +1,7 @@
 import { Avatar } from "@material-tailwind/react";
-import { NewChat } from "../(home)/chats/new/page";
+import { UserDto } from "../util/api";
 
-export default function NewChatListItem({ imageUrl, name, username }: NewChat) {
+export default function NewChatListItem({ imageUrl, name, username }: UserDto) {
   return (
     <div className="flex items-center justify-between hover:bg-ui-dark px-2 py-1 rounded-sm">
       <div className="flex gap-4 items-center">
