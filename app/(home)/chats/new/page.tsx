@@ -4,24 +4,28 @@ import NewChatListItem from "@/app/componets/new-chat-list-item";
 import { UserDto } from "@/app/util/api";
 import { getAllUsers } from "@/app/util/fetchers";
 import { IconButton, Spinner } from "@material-tailwind/react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import classNames from "classnames";
-import { useEffect, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { FaCircleArrowLeft, FaCircleArrowRight } from "react-icons/fa6";
 import { useLocalStorage } from "usehooks-ts";
 
-export interface NewChat {
-  _id: string;
-  imageUrl: string;
-  name: string;
-  username: string;
-}
+const getItemProperties = () =>
+  ({
+    size: "sm",
+    className:
+      "rounded-full text-base text-white bg-sky-600 hover:bg-sky-500 active:bg-sky-500 transition",
+  }) as any;
 
 export default function NewChat() {
-  const [active, setActive] = useState(1);
-  const { isLoading, data, error } = useQuery<UserDto[], Error>({
-    queryFn: () => getAllUsers(),
-    queryKey: ["users"],
+  const [activePage, setActivePage] = useState(1);
+  const {
+    isPending: loading,
+    error,
+    data,
+    mutate,
+  } = useMutation<{ users: UserDto[]; hasNextPage: boolean }, Error, number>({
+    mutationFn: (page) => getAllUsers(page),
   });
   const [, setToken] = useLocalStorage("_n", "");
   const [, setCipheredUser] = useLocalStorage("_e", "");
@@ -29,29 +33,27 @@ export default function NewChat() {
   useEffect(() => {
     if (error?.message === "401") {
       setToken("");
-      setCipheredUser("");
+      return setCipheredUser("");
     }
-  }, [error, setCipheredUser, setToken]);
 
-  const getItemProperties = (index: number) =>
-    ({
-      onClick: () => setActive(index),
-      size: "sm",
-      className:
-        "rounded-full text-base text-white bg-sky-600 hover:bg-sky-500 active:bg-sky-500 transition",
-    }) as any;
+    activePage && mutate(activePage);
+  }, [activePage, error, mutate, setCipheredUser, setToken]);
 
-  const next = () => {
-    if (active === 5) return;
+  const next = () => setActivePage(activePage + 1);
 
-    setActive(active + 1);
-  };
+  const previous = () => setActivePage(activePage - 1);
 
-  const previous = () => {
-    if (active === 1) return;
+  let displayUsers: ReactElement | ReactElement[] = <p></p>;
 
-    setActive(active - 1);
-  };
+  data &&
+    (displayUsers =
+      data.users.length > 0 ? (
+        (displayUsers = data.users.map((newChat) => (
+          <NewChatListItem {...newChat} key={newChat._id} />
+        )))
+      ) : (
+        <p className="text-center">No users available</p>
+      ));
 
   return (
     <>
@@ -60,37 +62,32 @@ export default function NewChat() {
         <h2 className="text-2xl text-center">All Users</h2>
 
         <div className="mt-5 text-xs sm:text-sm space-y-2">
-          {isLoading && <Spinner className="mx-auto" />}
-          {data &&
-            data.map((newChat) => (
-              <NewChatListItem {...newChat} key={newChat._id} />
-            ))}
+          {loading && <Spinner className="mx-auto" />}
+          {displayUsers}
         </div>
 
-        {!error && !isLoading && (
+        {!error && !loading && data && data.users?.length > 1 && (
           <div className="flex items-center justify-center gap-5 mt-2">
-            <button onClick={previous} disabled={active === 1}>
+            <button onClick={previous} disabled={activePage === 1}>
               <FaCircleArrowLeft
                 className={classNames("text-2xl", {
-                  "text-neutral-500": active === 1,
+                  "text-neutral-500": activePage === 1,
                 })}
               />
             </button>
-            <IconButton {...getItemProperties(2)}>{active}</IconButton>
-            <button onClick={next} disabled={active === 5}>
+            <IconButton {...getItemProperties()}>{activePage}</IconButton>
+            <button onClick={next} disabled={!data?.hasNextPage}>
               <FaCircleArrowRight
                 className={classNames("text-2xl", {
-                  "text-neutral-500": active === 5,
+                  "text-neutral-500": !data?.hasNextPage,
                 })}
               />
             </button>
           </div>
         )}
 
-        {error?.message && (
-          <p className="text-center text-red-600 text-sm">
-            {error.message === "401" ? "" : error.message}
-          </p>
+        {error && error.message !== "401" && (
+          <p className="text-center text-red-600 text-sm">{error.message}</p>
         )}
       </div>
     </>
