@@ -3,7 +3,10 @@
 import ChatList from "@/app/componets/chats/chats-list";
 import { useAppSelector } from "@/app/store/hooks";
 import { uiActions } from "@/app/store/ui-slice";
-import { Avatar, Card, Drawer } from "@material-tailwind/react";
+import { ExpandedChatDto } from "@/app/util/api";
+import { getAllChats } from "@/app/util/fetchers";
+import { Avatar, Card, Drawer, Spinner } from "@material-tailwind/react";
+import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,6 +23,10 @@ export default function ChatsLayout({
   const appDispatch = useDispatch();
   const userImage = useAppSelector((state) => state.auth.user?.imageUrl);
   const pathname = usePathname();
+  const { data, isLoading } = useQuery<ExpandedChatDto[], Error>({
+    queryFn: () => getAllChats(),
+    queryKey: ["chats"],
+  });
 
   return (
     <div className="flex">
@@ -51,7 +58,8 @@ export default function ChatsLayout({
             "h-[calc(100dvh-7.6rem)]  sm:h-[calc(100dvh-7.9rem)] overflow-y-auto scrollbar-none",
           )}
         >
-          <ChatList />
+          {isLoading && <Spinner className="mx-auto" />}
+          {data && <ChatList chats={data} />}
         </div>
       </Card>
       <section
@@ -81,7 +89,8 @@ export default function ChatsLayout({
           <hr className="my-2 px-2 border-border-dark border" />
           <p className="px-2 pb-1">Chats</p>
           <div className="sm:h-[calc(100dvh-7.9rem)] overflow-y-auto scrollbar-none">
-            <ChatList />
+            {isLoading && <Spinner className="mx-auto" />}
+            {data && <ChatList chats={data} />}
           </div>
         </Drawer>
       </section>
