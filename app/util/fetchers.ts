@@ -76,3 +76,21 @@ export const createNewChat = async (userId: string) => {
 
   return data;
 };
+
+export const getAllChats = async () => {
+  const response = await fetch(`${API_URL}/chats`, {
+    headers: {
+      Authorization: `Bearer ${getLocalStorageToken()}`,
+    },
+  });
+
+  const data = await response.json();
+
+  if (response.status === 401) throw new Error("401");
+
+  if (!response.ok) {
+    throw data;
+  }
+
+  return data;
+};
