@@ -1,11 +1,12 @@
 "use client";
 
 import NewChatListItem from "@/app/componets/new-chat-list-item";
-import { UserDto } from "@/app/util/api";
-import { getAllUsers } from "@/app/util/fetchers";
+import { ChatDto, UserDto } from "@/app/util/api";
+import { createNewChat, getAllUsers } from "@/app/util/fetchers";
 import { IconButton, Spinner } from "@material-tailwind/react";
 import { useMutation } from "@tanstack/react-query";
 import classNames from "classnames";
+import { redirect } from "next/navigation";
 import { ReactElement, useEffect, useState } from "react";
 import { FaCircleArrowLeft, FaCircleArrowRight } from "react-icons/fa6";
 import { useLocalStorage } from "usehooks-ts";
@@ -27,6 +28,13 @@ export default function NewChat() {
   } = useMutation<{ users: UserDto[]; hasNextPage: boolean }, Error, number>({
     mutationFn: (page) => getAllUsers(page),
   });
+  const {
+    isPending: createChatLoading,
+    data: createChatData,
+    mutate: createChatMutate,
+  } = useMutation<ChatDto, Error, string>({
+    mutationFn: (userId) => createNewChat(userId),
+  });
   const [, setToken] = useLocalStorage("_n", "");
   const [, setCipheredUser] = useLocalStorage("_e", "");
 
@@ -39,6 +47,10 @@ export default function NewChat() {
     activePage && mutate(activePage);
   }, [activePage, error, mutate, setCipheredUser, setToken]);
 
+  useEffect(() => {
+    if (createChatData) redirect(`/chats/${createChatData._id}`);
+  }, [createChatData]);
+
   const next = () => setActivePage(activePage + 1);
 
   const previous = () => setActivePage(activePage - 1);
@@ -49,7 +61,13 @@ export default function NewChat() {
     (displayUsers =
       data.users.length > 0 ? (
         (displayUsers = data.users.map((newChat) => (
-          <NewChatListItem {...newChat} key={newChat._id} />
+          <NewChatListItem
+            loading={createChatLoading}
+            disableButton={createChatLoading}
+            mutate={createChatMutate}
+            {...newChat}
+            key={newChat._id}
+          />
         )))
       ) : (
         <p className="text-center">No users available</p>
@@ -66,25 +84,28 @@ export default function NewChat() {
           {displayUsers}
         </div>
 
-        {!error && !loading && data && data.users?.length > 1 && (
-          <div className="flex items-center justify-center gap-5 mt-2">
-            <button onClick={previous} disabled={activePage === 1}>
-              <FaCircleArrowLeft
-                className={classNames("text-2xl", {
-                  "text-neutral-500": activePage === 1,
-                })}
-              />
-            </button>
-            <IconButton {...getItemProperties()}>{activePage}</IconButton>
-            <button onClick={next} disabled={!data?.hasNextPage}>
-              <FaCircleArrowRight
-                className={classNames("text-2xl", {
-                  "text-neutral-500": !data?.hasNextPage,
-                })}
-              />
-            </button>
-          </div>
-        )}
+        {!error &&
+          !loading &&
+          data &&
+          (activePage !== 1 || data.hasNextPage) && (
+            <div className="flex items-center justify-center gap-5 mt-2">
+              <button onClick={previous} disabled={activePage === 1}>
+                <FaCircleArrowLeft
+                  className={classNames("text-2xl", {
+                    "text-neutral-500": activePage === 1,
+                  })}
+                />
+              </button>
+              <IconButton {...getItemProperties()}>{activePage}</IconButton>
+              <button onClick={next} disabled={!data?.hasNextPage}>
+                <FaCircleArrowRight
+                  className={classNames("text-2xl", {
+                    "text-neutral-500": !data?.hasNextPage,
+                  })}
+                />
+              </button>
+            </div>
+          )}
 
         {error && error.message !== "401" && (
           <p className="text-center text-red-600 text-sm">{error.message}</p>
