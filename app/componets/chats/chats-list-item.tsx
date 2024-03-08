@@ -1,3 +1,5 @@
+import { useAppSelector } from "@/app/store/hooks";
+import { ExpandedChatDto } from "@/app/util/api";
 import { Avatar, Badge } from "@material-tailwind/react";
 import classNames from "classnames";
 import TimeAgo from "javascript-time-ago";
@@ -6,17 +8,17 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import ReactTimeAgo from "react-time-ago";
-import { Chat } from "./chats-list";
 TimeAgo.addDefaultLocale(en);
 
 export default function ChatListItem({
   _id,
-  participant: { imageUrl, name },
-  lastMessage: { createdAt, ownerId, text },
-  unreadMessages,
-}: Chat) {
+  participants,
+  lastMessage: { sendTime, sender, text },
+  unreadMessages = 0,
+}: ExpandedChatDto & { unreadMessages?: number }) {
   const parameters = useParams();
   const [isMounted, setIsMounted] = useState(false);
+  const userId = useAppSelector((state) => state.auth.user?._id);
 
   useEffect(() => setIsMounted(true), []);
 
@@ -30,17 +32,22 @@ export default function ChatListItem({
       })}
     >
       <Badge color="green" overlap="circular" placement="bottom-end">
-        <Avatar src={imageUrl} alt="Avatar" placeholder={undefined} size="md" />
+        <Avatar
+          src={participants.imageUrl}
+          alt="Avatar"
+          placeholder={undefined}
+          size="md"
+        />
       </Badge>
 
       <div className="flex flex-col flex-1 justify-between">
-        <p className="font-bold">{name}</p>
-        <p className="text-neutral-200 line-clamp-1">{`${ownerId === "1" ? "You: " : ""}${text}`}</p>
+        <p className="font-bold">{participants.name}</p>
+        <p className="text-neutral-200 line-clamp-1">{`${sender === userId ? "You: " : ""}${text}`}</p>
       </div>
       <div className="flex text-xs flex-col justify-between items-end ">
         <ReactTimeAgo
           tooltip={false}
-          date={new Date(createdAt)}
+          date={new Date(sendTime)}
           timeStyle="twitter"
         />
         {unreadMessages > 0 && (
