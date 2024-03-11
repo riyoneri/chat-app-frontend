@@ -36,7 +36,12 @@ export default function ChatId() {
   } = useMutation<MessageDto, Error, FetcherData>({
     mutationFn: (data) => protectedFetch(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["messages"] });
+      queryClient.invalidateQueries({
+        queryKey: ["chats"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["messages"],
+      });
       reset();
     },
   });
