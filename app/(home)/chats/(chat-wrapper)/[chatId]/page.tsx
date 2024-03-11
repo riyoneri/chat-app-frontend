@@ -3,11 +3,11 @@
 import MessagesList from "@/app/componets/messages/messages-list";
 import { useAppDispatch } from "@/app/store/hooks";
 import { uiActions } from "@/app/store/ui-slice";
-import { ChatWithMessagesDto } from "@/app/util/api";
-import { protectedFetch } from "@/app/util/fetchers";
+import { ChatWithMessagesDto, MessageDto } from "@/app/util/api";
+import { FetcherData, protectedFetch } from "@/app/util/fetchers";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Avatar, Badge, Spinner } from "@material-tailwind/react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import classNames from "classnames";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -24,9 +24,21 @@ const schema = object({ messageText: string().required() });
 export default function ChatId() {
   const parameters = useParams();
   const appDispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const { data, error, isLoading } = useQuery<ChatWithMessagesDto>({
     queryFn: () => protectedFetch({ url: `/chats/${parameters.chatId}` }),
     queryKey: ["messages", parameters.chatId],
+  });
+  const {
+    error: createMessageError,
+    isPending: createMessageLoading,
+    mutate,
+  } = useMutation<MessageDto, Error, FetcherData>({
+    mutationFn: (data) => protectedFetch(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["messages"] });
+      reset();
+    },
   });
   const {
     register,
@@ -36,14 +48,17 @@ export default function ChatId() {
   } = useForm({ resolver: yupResolver(schema) });
 
   const onSubmit = (data: MessageFormData) => {
-    console.log(data);
-    reset();
+    mutate({
+      url: `/chats/${parameters.chatId}`,
+      body: data,
+      method: "POST",
+    });
   };
 
   return (
     <>
-      <title>{`Chat ${parameters.chatId}`}</title>
-      <section className="flex flex-col h-full">
+      <title>{`Chat ${data?.participants?.username ?? ""}`}</title>
+      <section className="flex flex-col w-full h-full">
         <div className="flex justify-between items-center bg-ui-darker px-2 sm:px-3 py-2">
           <div className="flex gap-2 items-center">
             <GiHamburgerMenu
@@ -66,11 +81,14 @@ export default function ChatId() {
             </div>
           </div>
         </div>
-        <div className="py-1 overflow-y-auto min-h-[calc(100dvh-9.6rem)] sm:min-h-[calc(100dvh-9.9rem)] grid place-content-center scrollbar-none">
-          {data?.messages && <MessagesList messages={data?.messages} />}
-          {error && (
-            <p className="text-sm text-neutral-300">{error?.message}</p>
+        <div
+          className={classNames(
+            "py-1 overflow-y-auto h-[calc(100dvh-9.6rem)] sm:h-[calc(100dvh-9.9rem)] grid scrollbar-none",
+            { "place-content-center": error || isLoading },
           )}
+        >
+          {data?.messages && <MessagesList messages={data?.messages} />}
+          {error && <p className="text-sm text-neutral-300">{error.message}</p>}
           {isLoading && <Spinner fontSize={20} />}
         </div>
         <form
@@ -82,14 +100,21 @@ export default function ChatId() {
             className={classNames(
               "flex-1 resize-none min-w-1 p-1 text-sm focus:outline-none bg-neutral-700 border-2 border-neutral-700",
               {
-                "border-red-500": errors.messageText,
+                "border-red-500": errors.messageText || createMessageError,
               },
             )}
             rows={2}
             {...register("messageText")}
           ></textarea>
-          <button className="size-12 cursor-pointer grid place-content-center bg-sky-800">
-            <IoIosSend className="text-2xl" />
+          <button
+            disabled={createMessageLoading}
+            className="size-12 cursor-pointer grid place-content-center bg-sky-800"
+          >
+            {createMessageLoading ? (
+              <Spinner />
+            ) : (
+              <IoIosSend className="text-2xl" />
+            )}
           </button>
         </form>
       </section>
