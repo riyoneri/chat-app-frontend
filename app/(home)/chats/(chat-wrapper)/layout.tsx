@@ -4,7 +4,6 @@ import ChatList from "@/app/componets/chats/chats-list";
 import { useAppSelector } from "@/app/store/hooks";
 import { uiActions } from "@/app/store/ui-slice";
 import { ExpandedChatDto } from "@/app/util/api";
-import { getAllChats } from "@/app/util/fetchers";
 import { Avatar, Card, Drawer, Spinner } from "@material-tailwind/react";
 import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
@@ -13,6 +12,7 @@ import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 import { LuMessageSquarePlus } from "react-icons/lu";
 import { useDispatch } from "react-redux";
+import { protectedFetch } from "../../../util/fetchers";
 
 export default function ChatsLayout({
   children,
@@ -24,7 +24,7 @@ export default function ChatsLayout({
   const userImage = useAppSelector((state) => state.auth.user?.imageUrl);
   const pathname = usePathname();
   const { data, isLoading } = useQuery<ExpandedChatDto[], Error>({
-    queryFn: () => getAllChats(),
+    queryFn: () => protectedFetch({ url: "/chats" }),
     queryKey: ["chats"],
   });
 
