@@ -42,3 +42,16 @@ export interface ExpandedChatDto {
     sendTime: Date;
   };
 }
+
+export interface MessageDto {
+  _id: string;
+  conversationId: string;
+  senderId: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ChatWithMessagesDto extends ExpandedChatDto {
+  messages: MessageDto[];
+}

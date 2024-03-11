@@ -94,3 +94,43 @@ export const getAllChats = async () => {
 
   return data;
 };
+
+export interface FetcherData {
+  url: string;
+  method?: string;
+  body?: FormData;
+  useMultipartHeader?: boolean;
+}
+
+export const protectedFetch = async ({
+  url,
+  method = "GET",
+  body,
+  useMultipartHeader = false,
+}: FetcherData) => {
+  let headers: any = {
+    Authorization: `Bearer ${getLocalStorageToken()}`,
+  };
+
+  if (!useMultipartHeader) headers["Content-Type"] = "application/json";
+
+  const response = await fetch(`${API_URL}${url}`, {
+    method,
+    headers,
+    body: body ? (useMultipartHeader ? body : JSON.stringify(body)) : undefined,
+  });
+
+  const data = await response.json();
+
+  if (response.status === 401) {
+    localStorage.removeItem("_e");
+    localStorage.removeItem("_n");
+    return [];
+  }
+
+  if (!response.ok) {
+    throw data;
+  }
+
+  return data;
+};
