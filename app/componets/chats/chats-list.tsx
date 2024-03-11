@@ -1,7 +1,5 @@
 import { ExpandedChatDto } from "@/app/util/api";
 import ChatListItem from "./chats-list-item";
-const date = new Date();
-date.setDate(date.getDate() - 1);
 
 export default function ChatList({ chats }: { chats: ExpandedChatDto[] }) {
   return (
