@@ -6,10 +6,17 @@ dayjs.extend(relativeTime);
 
 export default function MessagesList({ messages }: { messages: MessageDto[] }) {
   return (
-    <div className="flex h-full flex-col gap-2 p-2 text-xs sm:text-sm">
+    <div className="flex flex-col gap-2 p-2 text-xs sm:text-sm">
       {messages.length > 0 ? (
-        messages.map((message) => (
-          <MessagesListItem {...message} key={message._id} displayDate />
+        messages.map((message, index) => (
+          <MessagesListItem
+            {...message}
+            key={message._id}
+            displayDate={
+              messages[index + 1]?.senderId !== messages[index]?.senderId ||
+              !messages[index + 1]
+            }
+          />
         ))
       ) : (
         <p className="text-center my-auto italic">No messages yet</p>
