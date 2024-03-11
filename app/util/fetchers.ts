@@ -98,7 +98,7 @@ export const getAllChats = async () => {
 export interface FetcherData {
   url: string;
   method?: string;
-  body?: FormData;
+  body?: FormData | {};
   useMultipartHeader?: boolean;
 }
 
@@ -114,10 +114,18 @@ export const protectedFetch = async ({
 
   if (!useMultipartHeader) headers["Content-Type"] = "application/json";
 
+  let bodyData;
+
+  bodyData = body instanceof FormData ? body : JSON.stringify(body);
+
+  if (!useMultipartHeader) {
+    body = JSON.stringify(body);
+  }
+
   const response = await fetch(`${API_URL}${url}`, {
     method,
     headers,
-    body: body ? (useMultipartHeader ? body : JSON.stringify(body)) : undefined,
+    body: bodyData,
   });
 
   const data = await response.json();
