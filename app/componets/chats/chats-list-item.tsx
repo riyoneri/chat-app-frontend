@@ -36,7 +36,7 @@ export default function ChatListItem({
           src={participants.imageUrl}
           alt="Avatar"
           placeholder={undefined}
-          size="md"
+          size="sm"
         />
       </Badge>
 

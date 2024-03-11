@@ -1,17 +1,17 @@
+import { MessageDto } from "@/app/util/api";
 import classNames from "classnames";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import MessageSVG from "./message-svg";
-import { Message } from "./messages-list";
 
 dayjs.extend(relativeTime);
 
 export default function MessagesListItem({
   createdAt,
   senderId,
-  text,
+  content,
   displayDate,
-}: Message & { displayDate?: boolean }) {
+}: MessageDto & { displayDate?: boolean }) {
   const now = dayjs();
   const messageDate = dayjs(createdAt);
 
@@ -35,7 +35,7 @@ export default function MessagesListItem({
             "bg-message-out text-black rounded-se-none": !isMesssageIncoming,
           })}
         >
-          {text}
+          {content}
         </div>
         {displayDate && (
           <p
