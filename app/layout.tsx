@@ -9,6 +9,9 @@ import { Provider } from "react-redux";
 import { SnackbarProvider } from "notistack";
 import "./globals.css";
 import store from "./store";
+import en from "javascript-time-ago/locale/en";
+import TimeAgo from "javascript-time-ago";
+TimeAgo.addDefaultLocale(en);
 
 const inter = Inter({ subsets: ["latin"] });
 

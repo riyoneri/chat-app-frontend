@@ -2,13 +2,10 @@ import { useAppSelector } from "@/app/store/hooks";
 import { ExpandedChatDto } from "@/app/util/api";
 import { Avatar, Badge } from "@material-tailwind/react";
 import classNames from "classnames";
-import TimeAgo from "javascript-time-ago";
-import en from "javascript-time-ago/locale/en";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import ReactTimeAgo from "react-time-ago";
-TimeAgo.addDefaultLocale(en);
 
 export default function ChatListItem({
   _id,
