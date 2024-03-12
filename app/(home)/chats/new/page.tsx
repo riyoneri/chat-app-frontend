@@ -47,9 +47,7 @@ export default function NewChat() {
     activePage && mutate(activePage);
   }, [activePage, error, mutate, setCipheredUser, setToken]);
 
-  useEffect(() => {
-    if (createChatData) redirect(`/chats/${createChatData._id}`);
-  }, [createChatData]);
+  if (createChatData) redirect(`/chats/${createChatData._id}`);
 
   const next = () => setActivePage(activePage + 1);
 

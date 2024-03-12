@@ -4,12 +4,13 @@ import ChatList from "@/app/componets/chats/chats-list";
 import { useAppSelector } from "@/app/store/hooks";
 import { uiActions } from "@/app/store/ui-slice";
 import { ExpandedChatDto } from "@/app/util/api";
+import socket from "@/app/util/socket";
 import { Avatar, Card, Drawer, Spinner } from "@material-tailwind/react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import classNames from "classnames";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { LuMessageSquarePlus } from "react-icons/lu";
 import { useDispatch } from "react-redux";
 import { protectedFetch } from "../../../util/fetchers";
@@ -20,6 +21,7 @@ export default function ChatsLayout({
   const rightSideBarOpened = useAppSelector(
     (state) => state.ui.rightSideBarOpened,
   );
+  const queryClient = useQueryClient();
   const appDispatch = useDispatch();
   const userImage = useAppSelector((state) => state.auth.user?.imageUrl);
   const pathname = usePathname();
@@ -27,6 +29,18 @@ export default function ChatsLayout({
     queryFn: () => protectedFetch({ url: "/chats" }),
     queryKey: ["chats"],
   });
+  useEffect(() => {
+    socket.on("chats", ({ type }: { type: string }) => {
+      if (type === "refetch") {
+        console.log("refetching");
+        queryClient.invalidateQueries({ queryKey: ["chats"] });
+      }
+    });
+
+    return () => {
+      socket.off("chats");
+    };
+  }, [queryClient]);
 
   return (
     <div className="flex">
