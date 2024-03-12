@@ -1,15 +1,17 @@
 "use client";
 
 import MessagesList from "@/app/componets/messages/messages-list";
-import { useAppDispatch } from "@/app/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { uiActions } from "@/app/store/ui-slice";
 import { ChatWithMessagesDto, MessageDto } from "@/app/util/api";
 import { FetcherData, protectedFetch } from "@/app/util/fetchers";
+import socket from "@/app/util/socket";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Avatar, Badge, Spinner } from "@material-tailwind/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import classNames from "classnames";
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoIosSend } from "react-icons/io";
@@ -25,6 +27,8 @@ export default function ChatId() {
   const parameters = useParams();
   const appDispatch = useAppDispatch();
   const queryClient = useQueryClient();
+  const userId = useAppSelector((state) => state.auth.user?._id);
+  const [badgeInvisible, setBadgeInvisible] = useState(true);
   const { data, error, isLoading } = useQuery<ChatWithMessagesDto>({
     queryFn: () => protectedFetch({ url: `/chats/${parameters.chatId}` }),
     queryKey: ["messages", parameters.chatId],
@@ -51,6 +55,29 @@ export default function ChatId() {
     reset,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
+  useEffect(() => {
+    socket.on(
+      "status",
+      ({ type, userId }: { type: "active" | "inactive"; userId: string }) => {
+        console.log(type, userId, data?.participants._id);
+        if (type === "active" && userId === data?.participants._id)
+          setBadgeInvisible(false);
+
+        if (type === "inactive" && userId === data?.participants._id)
+          setBadgeInvisible(true);
+      },
+    );
+
+    socket.on("actives", (activeChats: string[]) => {
+      if (activeChats.includes(data?.participants._id!))
+        setBadgeInvisible(false);
+    });
+
+    return () => {
+      socket.off("status");
+      socket.off("actives");
+    };
+  }, [data?.participants._id, userId]);
 
   const onSubmit = (data: MessageFormData) => {
     mutate({
@@ -71,7 +98,12 @@ export default function ChatId() {
               onClick={() => appDispatch(uiActions.openRightSideBar())}
             />
             <div className="flex-1 flex gap-2 items-center">
-              <Badge color="green" overlap="circular" placement="bottom-end">
+              <Badge
+                color="green"
+                overlap="circular"
+                placement="bottom-end"
+                invisible={badgeInvisible}
+              >
                 <Avatar
                   src={
                     data?.participants.imageUrl ??

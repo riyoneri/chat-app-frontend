@@ -5,7 +5,8 @@ import { useSnackbar } from "notistack";
 import { IoMdLogOut } from "react-icons/io";
 import { useLocalStorage } from "usehooks-ts";
 import { authActions } from "../store/auth-slice";
-import { useAppDispatch } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import socket from "../util/socket";
 
 export default function NavBar() {
   // eslint-disable-next-line unicorn/no-useless-undefined
@@ -13,6 +14,7 @@ export default function NavBar() {
   // eslint-disable-next-line unicorn/no-useless-undefined
   const [, setUser] = useLocalStorage("_e", undefined);
   const dispatch = useAppDispatch();
+  const userId = useAppSelector((state) => state.auth.user?._id);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   function handleLogout() {
@@ -28,6 +30,7 @@ export default function NavBar() {
     closeSnackbar(key);
     setToken(undefined);
     setUser(undefined);
+    socket.emit("logout", { userId });
   }
   return (
     <div className="bg-neutral-800 *:transition relative text-xs sm:text-sm flex gap-5 items-center justify-center py-2">

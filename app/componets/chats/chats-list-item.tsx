@@ -1,5 +1,6 @@
 import { useAppSelector } from "@/app/store/hooks";
 import { ExpandedChatDto } from "@/app/util/api";
+import socket from "@/app/util/socket";
 import { Avatar, Badge } from "@material-tailwind/react";
 import classNames from "classnames";
 import Link from "next/link";
@@ -15,9 +16,31 @@ export default function ChatListItem({
 }: ExpandedChatDto & { unreadMessages?: number }) {
   const parameters = useParams();
   const [isMounted, setIsMounted] = useState(false);
+  const [badgeInvisible, setBadgeInvisible] = useState(true);
   const userId = useAppSelector((state) => state.auth.user?._id);
 
-  useEffect(() => setIsMounted(true), []);
+  useEffect(() => {
+    setIsMounted(true);
+    socket.on(
+      "status",
+      ({ type, userId }: { type: "active" | "inactive"; userId: string }) => {
+        if (type === "active" && userId === participants._id)
+          setBadgeInvisible(false);
+
+        if (type === "inactive" && userId === participants._id)
+          setBadgeInvisible(true);
+      },
+    );
+
+    socket.on("actives", (activeChats: string[]) => {
+      if (activeChats.includes(participants._id)) setBadgeInvisible(false);
+    });
+
+    return () => {
+      socket.off("status");
+      socket.off("actives");
+    };
+  }, [participants._id, userId]);
 
   if (!isMounted) return;
 
@@ -28,7 +51,12 @@ export default function ChatListItem({
         "bg-ui-darkest": parameters.chatId === _id,
       })}
     >
-      <Badge color="green" overlap="circular" placement="bottom-end">
+      <Badge
+        color="green"
+        overlap="circular"
+        placement="bottom-end"
+        invisible={badgeInvisible}
+      >
         <Avatar
           src={participants.imageUrl}
           alt="Avatar"
