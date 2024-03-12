@@ -8,6 +8,7 @@ import useLocalStorageData from "../hooks/use-localstoragedata";
 import { useAppDispatch } from "../store/hooks";
 import { authActions } from "../store/auth-slice";
 import { useLocalStorage } from "usehooks-ts";
+import socket from "../util/socket";
 
 export default function ProtectedLayout({
   children,
@@ -35,7 +36,13 @@ export default function ProtectedLayout({
       enqueueSnackbar("Login first", { variant: "error", key: 2 });
       redirect("/auth/login");
     }
-  }, [data, enqueueSnackbar, setCipheredUser, setToken]);
+    if (isMounted) {
+      socket.emit("initialize", { userId: data?.user._id });
+      socket.io.on("reconnect", () => {
+        socket.emit("reconnect", { userId: data?.user._id });
+      });
+    }
+  }, [data, enqueueSnackbar, isMounted, setCipheredUser, setToken]);
 
   if (!isMounted) return;
 
