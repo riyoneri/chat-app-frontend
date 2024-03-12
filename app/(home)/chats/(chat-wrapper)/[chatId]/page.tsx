@@ -53,6 +53,7 @@ export default function ChatId() {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
   useEffect(() => {
@@ -78,6 +79,18 @@ export default function ChatId() {
       socket.off("actives");
     };
   }, [data?.participants._id, userId]);
+
+  const inputValue = watch("messageText");
+
+  useEffect(() => {
+    if (!inputValue) return;
+
+    socket.emit("typing-status", {
+      status: "active",
+      senderId: userId,
+      receiverId: data?.participants._id,
+    });
+  }, [data?.participants._id, inputValue, userId]);
 
   const onSubmit = (data: MessageFormData) => {
     mutate({

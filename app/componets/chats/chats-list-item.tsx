@@ -18,6 +18,10 @@ export default function ChatListItem({
   const [isMounted, setIsMounted] = useState(false);
   const [badgeInvisible, setBadgeInvisible] = useState(true);
   const userId = useAppSelector((state) => state.auth.user?._id);
+  const [recentMessage, setRecentMessage] = useState(
+    `${sender === userId ? "You: " : ""}${text}`,
+  );
+  let typingTimer: NodeJS.Timeout;
 
   useEffect(() => {
     setIsMounted(true);
@@ -39,10 +43,20 @@ export default function ChatListItem({
     return () => {
       socket.off("status");
       socket.off("actives");
+      socket.off("typing-status");
     };
-  }, [participants._id, userId]);
+  }, [participants._id]);
 
   if (!isMounted) return;
+
+  socket.on("typing-status", ({ senderId }: { senderId: string }) => {
+    if (senderId !== participants._id) return;
+    clearTimeout(typingTimer);
+    setRecentMessage("Typing...");
+    typingTimer = setTimeout(() => {
+      setRecentMessage(`${sender === userId ? "You: " : ""}${text}`);
+    }, 1000);
+  });
 
   return (
     <Link
@@ -67,7 +81,13 @@ export default function ChatListItem({
 
       <div className="flex flex-col flex-1 justify-between">
         <p className="font-bold">{participants.name}</p>
-        <p className="text-neutral-200 line-clamp-1">{`${sender === userId ? "You: " : ""}${text}`}</p>
+        <p
+          className={classNames("text-neutral-200 line-clamp-1", {
+            italic: recentMessage === "Typing...",
+          })}
+        >
+          {recentMessage}
+        </p>
       </div>
       <div className="flex text-xs flex-col justify-between items-end ">
         <ReactTimeAgo

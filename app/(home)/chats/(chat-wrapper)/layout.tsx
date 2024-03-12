@@ -91,7 +91,7 @@ export default function ChatsLayout({
         >
           <div className="flex px-2 justify-between items-center text-2xl">
             <Avatar
-              src="https://docs.material-tailwind.com/img/face-2.jpg"
+              src={userImage}
               alt="Avatar"
               placeholder={undefined}
               size="sm"
