@@ -2,6 +2,7 @@ import { useAppSelector } from "@/app/store/hooks";
 import { ExpandedChatDto } from "@/app/util/api";
 import socket from "@/app/util/socket";
 import { Avatar, Badge } from "@material-tailwind/react";
+import { useQueryClient } from "@tanstack/react-query";
 import classNames from "classnames";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -14,6 +15,7 @@ export default function ChatListItem({
   lastMessage: { sendTime, sender, text },
   unreadMessages = 0,
 }: ExpandedChatDto & { unreadMessages?: number }) {
+  const queryClient = useQueryClient();
   const parameters = useParams();
   const [isMounted, setIsMounted] = useState(false);
   const [badgeInvisible, setBadgeInvisible] = useState(true);
@@ -51,6 +53,7 @@ export default function ChatListItem({
 
   socket.on("typing-status", ({ senderId }: { senderId: string }) => {
     if (senderId !== participants._id) return;
+    queryClient.invalidateQueries({ queryKey: ["chats"] });
     clearTimeout(typingTimer);
     setRecentMessage("Typing...");
     typingTimer = setTimeout(() => {
