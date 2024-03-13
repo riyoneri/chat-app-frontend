@@ -32,7 +32,6 @@ export default function ChatsLayout({
   useEffect(() => {
     socket.on("chats", ({ type }: { type: string }) => {
       if (type === "refetch") {
-        console.log("refetching");
         queryClient.invalidateQueries({ queryKey: ["chats"] });
       }
     });

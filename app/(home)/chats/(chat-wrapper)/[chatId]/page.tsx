@@ -60,7 +60,6 @@ export default function ChatId() {
     socket.on(
       "status",
       ({ type, userId }: { type: "active" | "inactive"; userId: string }) => {
-        console.log(type, userId, data?.participants._id);
         if (type === "active" && userId === data?.participants._id)
           setBadgeInvisible(false);
 
