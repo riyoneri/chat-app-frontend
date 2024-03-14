@@ -23,7 +23,7 @@ export default function MessagesListItem({
       <MessageSVG incoming={isMesssageIncoming} />
       <div>
         <div
-          className={classNames("rounded-md px-2 py-1 flex-1", {
+          className={classNames("rounded-md px-2 py-1 flex-1 break-all", {
             "bg-neutral-700 rounded-ss-none": isMesssageIncoming,
             "bg-message-out text-black rounded-se-none": !isMesssageIncoming,
           })}
