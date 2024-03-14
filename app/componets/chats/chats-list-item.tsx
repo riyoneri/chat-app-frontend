@@ -1,4 +1,5 @@
-import { useAppSelector } from "@/app/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
+import { uiActions } from "@/app/store/ui-slice";
 import { ExpandedChatDto } from "@/app/util/api";
 import socket from "@/app/util/socket";
 import { Avatar, Badge } from "@material-tailwind/react";
@@ -16,6 +17,7 @@ export default function ChatListItem({
   unreadMessages = 0,
 }: ExpandedChatDto & { unreadMessages?: number }) {
   const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
   const parameters = useParams();
   const [isMounted, setIsMounted] = useState(false);
   const [badgeInvisible, setBadgeInvisible] = useState(true);
@@ -67,6 +69,7 @@ export default function ChatListItem({
       className={classNames("flex gap-3 hover:bg-ui-darkest transition", {
         "bg-ui-darkest": parameters.chatId === _id,
       })}
+      onClick={() => dispatch(uiActions.closeRightSideBar())}
     >
       <Badge
         color="green"
