@@ -151,7 +151,7 @@ export default function Register() {
 
             <ImageInputLabel
               name="image"
-              placeHolder="Avatar image"
+              placeHolder="Upload profile image"
               register={register}
               error={errors.image?.message}
               currentImage={watch("image")?.[0]}
