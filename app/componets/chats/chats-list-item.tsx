@@ -88,7 +88,7 @@ export default function ChatListItem({
       <div className="flex flex-col flex-1 justify-between">
         <p className="font-bold">{participants.name}</p>
         <p
-          className={classNames("text-neutral-200 line-clamp-1", {
+          className={classNames("text-neutral-200 line-clamp-1 break-all", {
             italic: recentMessage === "Typing...",
           })}
         >
