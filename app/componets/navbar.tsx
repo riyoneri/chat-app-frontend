@@ -1,6 +1,8 @@
 "use client";
 
+import classNames from "classnames";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSnackbar } from "notistack";
 import { IoMdLogOut } from "react-icons/io";
 import { useLocalStorage } from "usehooks-ts";
@@ -16,6 +18,7 @@ export default function NavBar() {
   const dispatch = useAppDispatch();
   const userId = useAppSelector((state) => state.auth.user?._id);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const pathname = usePathname();
 
   function handleLogout() {
     dispatch(authActions.logout());
@@ -34,24 +37,31 @@ export default function NavBar() {
   }
   return (
     <div className="bg-neutral-800 *:transition relative text-xs sm:text-sm flex gap-5 items-center justify-center py-2">
-      <Link href="/chats" className="bg-sky-800 px-2 sm:px-3 rounded-full">
+      <Link
+        href="/chats"
+        className={classNames("px-2 hover:bg-sky-800 sm:px-3 rounded-full", {
+          "bg-sky-800": pathname === "/chats",
+        })}
+      >
         Chats
       </Link>
-      <Link
+      {/* <Link
         href="/chats"
         className="hover:bg-sky-800 px-2 sm:px-3 rounded-full"
       >
         Groups
-      </Link>
+      </Link> */}
       <Link
-        href="/chats"
-        className="hover:bg-sky-800 px-2 sm:px-3 rounded-full"
+        href="/chats/new"
+        className={classNames("px-2 hover:bg-sky-800 sm:px-3 rounded-full", {
+          "bg-sky-800": pathname === "/chats/new",
+        })}
       >
         People
       </Link>
       <button
         onClick={handleLogout}
-        className="hover:bg-sky-800 sm:px-2 rounded-full"
+        className="sm:px-2 hover:bg-sky-800 rounded-full"
       >
         <IoMdLogOut className="text-sm sm:text-xl" />
       </button>
