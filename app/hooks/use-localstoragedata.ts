@@ -1,9 +1,19 @@
 import { useLocalStorage } from "usehooks-ts";
 import { decryptHash } from "../util/security-hash";
 
+let savedToken: string = "";
+let savedCipheredUser: string = "";
+
 export default function useLocalStorageData() {
   const [token] = useLocalStorage<string>("_n", "_");
   const [cipheredUser] = useLocalStorage<string>("_e", "_");
+
+  !savedToken && token !== "_" && (savedToken = token);
+  !savedCipheredUser &&
+    cipheredUser !== "_" &&
+    (savedCipheredUser = cipheredUser);
+
+  if (savedToken !== token || savedCipheredUser !== cipheredUser) return;
 
   if (!token || !cipheredUser) {
     return;
