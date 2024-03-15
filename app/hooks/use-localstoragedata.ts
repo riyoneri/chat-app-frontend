@@ -8,9 +8,10 @@ export default function useLocalStorageData() {
   const [token] = useLocalStorage<string>("_n", "_");
   const [cipheredUser] = useLocalStorage<string>("_e", "_");
 
-  !savedToken && token !== "_" && (savedToken = token);
+  !savedToken && token !== "_" && token !== "undefined" && (savedToken = token);
   !savedCipheredUser &&
     cipheredUser !== "_" &&
+    cipheredUser !== "undefined" &&
     (savedCipheredUser = cipheredUser);
 
   if (savedToken !== token || savedCipheredUser !== cipheredUser) return;
