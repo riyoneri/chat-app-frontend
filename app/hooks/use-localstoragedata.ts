@@ -4,14 +4,18 @@ import { decryptHash } from "../util/security-hash";
 let savedToken: string = "";
 let savedCipheredUser: string = "";
 
+export const clearSavedData = () => {
+  savedToken = "";
+  savedCipheredUser = "";
+};
+
 export default function useLocalStorageData() {
   const [token] = useLocalStorage<string>("_n", "_");
   const [cipheredUser] = useLocalStorage<string>("_e", "_");
 
-  !savedToken && token !== "_" && token !== "undefined" && (savedToken = token);
+  !savedToken && token !== "_" && (savedToken = token);
   !savedCipheredUser &&
     cipheredUser !== "_" &&
-    cipheredUser !== "undefined" &&
     (savedCipheredUser = cipheredUser);
 
   if (savedToken !== token || savedCipheredUser !== cipheredUser) return;

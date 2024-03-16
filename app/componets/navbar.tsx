@@ -6,15 +6,14 @@ import { usePathname } from "next/navigation";
 import { useSnackbar } from "notistack";
 import { IoMdLogOut } from "react-icons/io";
 import { useLocalStorage } from "usehooks-ts";
+import { clearSavedData } from "../hooks/use-localstoragedata";
 import { authActions } from "../store/auth-slice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import socket from "../util/socket";
 
 export default function NavBar() {
-  // eslint-disable-next-line unicorn/no-useless-undefined
-  const [, setToken] = useLocalStorage("_n", undefined);
-  // eslint-disable-next-line unicorn/no-useless-undefined
-  const [, setUser] = useLocalStorage("_e", undefined);
+  const [, setToken] = useLocalStorage("_n", "");
+  const [, setUser] = useLocalStorage("_e", "");
   const dispatch = useAppDispatch();
   const userId = useAppSelector((state) => state.auth.user?._id);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -31,8 +30,9 @@ export default function NavBar() {
       transitionDuration: 0,
     });
     closeSnackbar(key);
-    setToken(undefined);
-    setUser(undefined);
+    setToken("");
+    setUser("");
+    clearSavedData();
     socket.emit("logout", { userId });
   }
   return (
@@ -45,12 +45,14 @@ export default function NavBar() {
       >
         Chats
       </Link>
-      {/* <Link
-        href="/chats"
-        className="hover:bg-sky-800 px-2 sm:px-3 rounded-full"
+      <Link
+        href="/groups"
+        className={classNames("hover:bg-sky-800 px-2 sm:px-3 rounded-full", {
+          "bg-sky-800": pathname.includes("/groups"),
+        })}
       >
         Groups
-      </Link> */}
+      </Link>
       <Link
         href="/chats/new"
         className={classNames("px-2 hover:bg-sky-800 sm:px-3 rounded-full", {

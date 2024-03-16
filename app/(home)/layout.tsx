@@ -3,11 +3,11 @@
 import { redirect } from "next/navigation";
 import { useSnackbar } from "notistack";
 import { ReactNode, useEffect, useState } from "react";
+import { useLocalStorage } from "usehooks-ts";
 import NavBar from "../componets/navbar";
 import useLocalStorageData from "../hooks/use-localstoragedata";
-import { useAppDispatch } from "../store/hooks";
 import { authActions } from "../store/auth-slice";
-import { useLocalStorage } from "usehooks-ts";
+import { useAppDispatch } from "../store/hooks";
 import socket from "../util/socket";
 
 export default function ProtectedLayout({
@@ -15,24 +15,16 @@ export default function ProtectedLayout({
 }: Readonly<{ children: ReactNode }>) {
   const { enqueueSnackbar } = useSnackbar();
   const data = useLocalStorageData();
-  const [, setToken] = useLocalStorage<string | undefined>(
-    "_n",
-    // eslint-disable-next-line unicorn/no-useless-undefined
-    undefined,
-  );
-  const [, setCipheredUser] = useLocalStorage<string | undefined>(
-    "_e",
-    // eslint-disable-next-line unicorn/no-useless-undefined
-    undefined,
-  );
+  const [, setToken] = useLocalStorage("_n", "");
+  const [, setCipheredUser] = useLocalStorage("_e", "");
   const dispatch = useAppDispatch();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
     if (!data) {
-      setCipheredUser(undefined);
-      setToken(undefined);
+      setCipheredUser("");
+      setToken("");
       enqueueSnackbar("Login first", { variant: "error", key: 2 });
       redirect("/auth/login");
     }
