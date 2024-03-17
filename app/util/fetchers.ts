@@ -1,4 +1,4 @@
-import { LoginFormData } from "../auth/login/page";
+import { LoginFormData } from "../(client)/auth/login/page";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
