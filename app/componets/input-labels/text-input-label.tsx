@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { FieldValues, Path, UseFormRegister } from "react-hook-form";
 
 interface TextInputLabelProperties<T extends FieldValues> {
@@ -6,6 +7,7 @@ interface TextInputLabelProperties<T extends FieldValues> {
   placeHolder: string;
   register: UseFormRegister<T>;
   error?: string;
+  className?: string;
 }
 
 export default function TextInputLabel<T extends FieldValues>({
@@ -14,9 +16,13 @@ export default function TextInputLabel<T extends FieldValues>({
   placeHolder,
   register,
   error,
+  className,
 }: TextInputLabelProperties<T>) {
   return (
-    <label htmlFor={String(name)} className="flex flex-col">
+    <label
+      htmlFor={String(name)}
+      className={classNames("flex flex-col", className)}
+    >
       <input
         type={type}
         className="text-sm sm:w-auto bg-neutral-700 rounded-sm p-2 focus:outline-none"
