@@ -3,14 +3,14 @@
 import { ThemeProvider } from "@material-tailwind/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import classNames from "classnames";
+import TimeAgo from "javascript-time-ago";
+import en from "javascript-time-ago/locale/en";
 import { Inter } from "next/font/google";
+import { SnackbarProvider } from "notistack";
 import { useState } from "react";
 import { Provider } from "react-redux";
-import { SnackbarProvider } from "notistack";
 import "./globals.css";
 import store from "./store";
-import en from "javascript-time-ago/locale/en";
-import TimeAgo from "javascript-time-ago";
 TimeAgo.addDefaultLocale(en);
 
 const inter = Inter({ subsets: ["latin"] });
