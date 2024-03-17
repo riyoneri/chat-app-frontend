@@ -1,4 +1,4 @@
-import { RegisterFormData } from "@/app/auth/register/page";
+import { RegisterFormData } from "@/app/(client)/auth/register/page";
 import Image from "next/image";
 import { UseFormRegister } from "react-hook-form";
 
