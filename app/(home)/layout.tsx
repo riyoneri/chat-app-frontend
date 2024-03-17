@@ -43,7 +43,7 @@ export default function ProtectedLayout({
   return (
     <>
       <main className="flex flex-col min-h-dvh">
-        <section className="flex-1">{children}</section>
+        <section className="flex-1 grid">{children}</section>
         <NavBar />
       </main>
     </>
