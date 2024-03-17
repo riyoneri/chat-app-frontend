@@ -45,14 +45,14 @@ export default function NavBar() {
       >
         Chats
       </Link>
-      <Link
+      {/* <Link
         href="/groups"
         className={classNames("hover:bg-sky-800 px-2 sm:px-3 rounded-full", {
           "bg-sky-800": pathname.includes("/groups"),
         })}
       >
         Groups
-      </Link>
+      </Link> */}
       <Link
         href="/chats/new"
         className={classNames("px-2 hover:bg-sky-800 sm:px-3 rounded-full", {
