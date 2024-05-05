@@ -1,3 +1,5 @@
+"use client";
+
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { uiActions } from "@/app/store/ui-slice";
 import { ExpandedChatDto } from "@/app/util/api";
@@ -9,6 +11,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import ReactTimeAgo from "react-time-ago";
+import { motion } from "framer-motion";
 
 export default function ChatListItem({
   _id,
@@ -64,49 +67,59 @@ export default function ChatListItem({
   });
 
   return (
-    <Link
-      href={`/chats/${_id}`}
-      className={classNames("flex gap-3 hover:bg-ui-darkest transition", {
+    <motion.li
+      key={_id}
+      layout
+      transition={{
+        duration: 0.1,
+        bounce: 0,
+      }}
+      className={classNames(" hover:bg-ui-darkest transition bg-ui-dark", {
         "bg-ui-darkest": parameters.chatId === _id,
       })}
-      onClick={() => dispatch(uiActions.closeRightSideBar())}
     >
-      <Badge
-        color="green"
-        overlap="circular"
-        placement="bottom-end"
-        invisible={badgeInvisible}
+      <Link
+        href={`/chats/${_id}`}
+        className="flex gap-3"
+        onClick={() => dispatch(uiActions.closeRightSideBar())}
       >
-        <Avatar
-          src={participants.imageUrl}
-          alt="Avatar"
-          placeholder={undefined}
-          size="sm"
-        />
-      </Badge>
-
-      <div className="flex flex-col flex-1 justify-between">
-        <p className="font-bold">{participants.name}</p>
-        <p
-          className={classNames("text-neutral-200 line-clamp-1 break-all", {
-            italic: recentMessage === "Typing...",
-          })}
+        <Badge
+          color="green"
+          overlap="circular"
+          placement="bottom-end"
+          invisible={badgeInvisible}
         >
-          {recentMessage}
-        </p>
-      </div>
-      <div className="flex text-xs flex-col justify-between items-end ">
-        <ReactTimeAgo
-          tooltip={false}
-          date={new Date(sendTime)}
-          timeStyle="twitter"
-        />
-        {unreadMessages > 0 && (
-          <span className="size-5  grid place-content-center bg-orange-200 text-black rounded-full">
-            {unreadMessages > 9 ? "9+" : unreadMessages}
-          </span>
-        )}
-      </div>
-    </Link>
+          <Avatar
+            src={participants.imageUrl}
+            alt="Avatar"
+            placeholder={undefined}
+            size="sm"
+          />
+        </Badge>
+
+        <div className="flex flex-col flex-1 justify-between">
+          <p className="font-bold">{participants.name}</p>
+          <p
+            className={classNames("text-neutral-200 line-clamp-1 break-all", {
+              italic: recentMessage === "Typing...",
+            })}
+          >
+            {recentMessage}
+          </p>
+        </div>
+        <div className="flex text-xs flex-col justify-between items-end ">
+          <ReactTimeAgo
+            tooltip={false}
+            date={new Date(sendTime)}
+            timeStyle="twitter"
+          />
+          {unreadMessages > 0 && (
+            <span className="size-5  grid place-content-center bg-orange-200 text-black rounded-full">
+              {unreadMessages > 9 ? "9+" : unreadMessages}
+            </span>
+          )}
+        </div>
+      </Link>
+    </motion.li>
   );
 }
