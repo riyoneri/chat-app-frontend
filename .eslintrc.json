@@ -1,5 +1,5 @@
 {
-  "extends": ["next/core-web-vitals", "plugin:tailwindcss/recommended", "prettier"],
+  "extends": ["next/core-web-vitals", "plugin:tailwindcss/recommended", "plugin:react-hooks/recommended", "prettier"],
   "plugins": ["unicorn"],
   "rules": {
     "no-console": "error",
