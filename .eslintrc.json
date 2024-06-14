@@ -1,6 +1,7 @@
 {
   "extends": [
     "next/core-web-vitals",
+    "plugin:unicorn/recommended",
     "plugin:tailwindcss/recommended",
     "plugin:react-hooks/recommended",
     "prettier"
