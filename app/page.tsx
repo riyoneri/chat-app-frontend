@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <main className="mx-auto flex w-full flex-col justify-center sm:w-2/3 md:w-1/2">
       <h3 className="text-center text-2xl font-medium">Sign in to the app</h3>
-      <form className="grid gap-3 mt-5" onSubmit={handleSubmit(submitHandler)}>
+      <form className="mt-5 grid gap-3" onSubmit={handleSubmit(submitHandler)}>
         <TextInputLabel
           register={register("username")}
           name="email"
@@ -40,19 +40,19 @@ export default function Home() {
         />
         <Link
           href="/forgot-password"
-          className="ml-auto -mt-2 hover:text-accent text-sm transition"
+          className="-mt-2 ml-auto text-sm transition hover:text-accent"
         >
           Forgot password?
         </Link>
 
-        <button className="rounded-sm bg-secondary py-1 hover:bg-secondary/80 transition">
+        <button className="rounded-sm bg-secondary py-1 transition hover:bg-secondary/80">
           Sign In
         </button>
       </form>
 
       <span className="dui-divider text-sm">No Account?</span>
 
-      <Link href="/register" className="mx-auto hover:text-accent transition">
+      <Link href="/register" className="mx-auto transition hover:text-accent">
         Register
       </Link>
     </main>
