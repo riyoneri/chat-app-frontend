@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { UseFormRegisterReturn } from "react-hook-form";
 
 interface TextInputLabelProperties {
@@ -5,6 +6,7 @@ interface TextInputLabelProperties {
   placeHolder: string;
   errorMessage?: string;
   register: UseFormRegisterReturn;
+  className?: string;
 }
 
 export default function TextInputLabel({
@@ -12,9 +14,10 @@ export default function TextInputLabel({
   placeHolder,
   register,
   errorMessage,
+  className,
 }: TextInputLabelProperties) {
   return (
-    <label htmlFor={name} className="grid">
+    <label htmlFor={name} className={classNames("grid", className)}>
       <input
         type="text"
         {...register}
