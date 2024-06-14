@@ -19,7 +19,7 @@ export default function RootLayout({
       <body
         className={classNames(
           montserrat.className,
-          "bg-neutral-900 text-white",
+          "bg-neutral-900 text-white min-h-dvh grid *:px-5",
         )}
       >
         {children}
