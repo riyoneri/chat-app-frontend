@@ -1,8 +1,9 @@
+import classNames from "classnames";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const montserrat = Montserrat({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Chat App",
@@ -15,7 +16,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body
+        className={classNames(
+          montserrat.className,
+          "bg-neutral-900 text-white",
+        )}
+      >
+        {children}
+      </body>
     </html>
   );
 }
