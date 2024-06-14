@@ -10,8 +10,7 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "!(*.json)": "prettier --write",
-    "*.{ts,tsx,css,html}": [
+    "*.{ts,tsx,json,css,html}": [
       "eslint --quiet --fix",
       "prettier --write"
     ]
