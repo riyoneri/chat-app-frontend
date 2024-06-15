@@ -10,6 +10,9 @@ const config: Config = {
         accent: "rgb(103, 136, 168)",
         tertiary: "rgb(89, 89, 89)",
       },
+      screens: {
+        xs: "400px",
+      },
     },
   },
   plugins: [daisyUI],
