@@ -132,12 +132,6 @@ export default function RegisterPage() {
             placeHolder="Confirm password"
             errorMessage={errors.confirmPassword?.message}
           />
-          <Link
-            href="/forgot-password"
-            className="-mt-2 ml-auto text-sm transition hover:text-accent"
-          >
-            Forgot password?
-          </Link>
 
           <button className="rounded-sm bg-secondary py-1 transition hover:bg-secondary/80">
             Register
