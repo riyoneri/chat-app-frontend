@@ -44,7 +44,7 @@ export default function LoginPage() {
             errorMessage={errors.password?.message}
           />
           <Link
-            href="/forgot-password"
+            href="/auth/forgot-password"
             className="-mt-2 ml-auto text-sm transition hover:text-accent"
           >
             Forgot password?
