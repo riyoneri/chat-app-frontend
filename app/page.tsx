@@ -25,7 +25,7 @@ export default function LoginPage() {
   return (
     <>
       <title>Sign In</title>
-      <main className="mx-auto flex w-full flex-col justify-center sm:w-2/3 md:w-1/2">
+      <main className="mx-auto flex w-full flex-col justify-center sm:w-2/3 md:w-1/2 lg:w-1/3">
         <h3 className="text-center text-2xl font-medium">Sign in to the app</h3>
         <form
           className="mt-5 grid gap-3"

@@ -149,7 +149,7 @@ export default function RegisterPage() {
           Close
         </label>
       </dialog>
-      <main className="mx-auto flex w-full flex-col justify-center sm:w-2/3 md:w-1/2">
+      <main className="mx-auto flex w-full flex-col justify-center sm:w-2/3 md:w-1/2 lg:w-1/3">
         <h3 className="text-center text-2xl font-medium">
           Register new account
         </h3>
