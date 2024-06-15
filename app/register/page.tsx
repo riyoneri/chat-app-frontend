@@ -1,5 +1,6 @@
 "use client";
 
+import ImageInputLabel from "@/components/input-labels/image-input-label";
 import PasswordInputLabel from "@/components/input-labels/password-input-label";
 import TextInputLabel from "@/components/input-labels/text-input-label";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -7,13 +8,26 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { object, ref, string } from "yup";
+import { mixed, object, ref, string } from "yup";
 import MailSentIllustration from "../assets/illustrations/mail-sent";
 
 const loginSchema = object({
   name: string().required("Name is required"),
   username: string().required("Username is required"),
   email: string().email("Email is invalid").required("Email is required"),
+  image: mixed((input): input is FileList => input instanceof FileList)
+    .required("Image is required")
+    .test("file", "Image is required", (fileList) => fileList.length > 0)
+    .test("fileType", "Allowed formats are jpeg, png and jpg", (fileList) =>
+      ["image/jpeg", "image/png", "image/jpg"].includes(
+        fileList[0]?.type.toLocaleLowerCase(),
+      ),
+    )
+    .test(
+      "fileSize",
+      "Image size must be less than or equal to 2MB",
+      (fileList) => fileList[0]?.size <= 2_000_000,
+    ),
   password: string()
     .required("Password not strong")
     .matches(/[A-Z]/, "Password not strong")
@@ -177,6 +191,15 @@ export default function RegisterPage() {
             name="email"
             placeHolder="Email"
             errorMessage={errors.email?.message}
+          />
+
+          <ImageInputLabel
+            name="image"
+            className="justify-stretch"
+            placeHolder="Enter your profile image"
+            register={register("image")}
+            errorMessage={errors.image?.message}
+            currentImage={watch("image")?.[0]}
           />
 
           <PasswordInputLabel
