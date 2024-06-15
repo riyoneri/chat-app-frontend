@@ -9,6 +9,7 @@ interface PasswordInputLabelProperties {
   errorMessage?: string;
   register: UseFormRegisterReturn;
   className?: string;
+  validations?: { isValid: () => boolean; errorMessage: string }[];
 }
 
 export default function PasswordInputLabel({
@@ -17,10 +18,18 @@ export default function PasswordInputLabel({
   register,
   errorMessage,
   className,
+  validations,
 }: PasswordInputLabelProperties) {
   const [isVisible, setIsVisible] = useState(false);
   return (
-    <label htmlFor={name} className={classNames("grid", className)}>
+    <label
+      htmlFor={name}
+      className={classNames(
+        "grid",
+        { "gap-2": validations?.length },
+        className,
+      )}
+    >
       <div className="flex items-center rounded-sm bg-tertiary px-2 py-1">
         <input
           type={isVisible ? "text" : "password"}
@@ -36,6 +45,25 @@ export default function PasswordInputLabel({
           {isVisible ? <FaEyeSlash /> : <FaEye />}
         </span>
       </div>
+
+      {validations?.length && (
+        <div className="space-y-1 text-sm">
+          {validations?.map((validation) => (
+            <div key={validation.errorMessage}>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  disabled
+                  checked={validation.isValid()}
+                  className="dui-checkbox-success dui-checkbox dui-checkbox-xs"
+                />
+                <span>{validation.errorMessage}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {errorMessage && (
         <span className="text-sm text-red-700">{errorMessage}</span>
       )}
