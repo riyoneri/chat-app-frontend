@@ -1,12 +1,12 @@
 "use client";
 
+import ResetPasswordRequest from "@/app/assets/illustrations/reset-password-request";
 import TextInputLabel from "@/components/input-labels/text-input-label";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { object, string } from "yup";
-import ResetPasswordRequest from "../assets/illustrations/reset-password-request";
 
 const loginSchema = object({
   email: string().email("Email is invalid").required("Email is required"),
@@ -87,7 +87,10 @@ export default function ForgoPasswordPage() {
 
         <span className="dui-divider"></span>
 
-        <Link href="/" className="mx-auto transition hover:text-accent">
+        <Link
+          href="/auth/signin"
+          className="mx-auto transition hover:text-accent"
+        >
           Login
         </Link>
       </main>

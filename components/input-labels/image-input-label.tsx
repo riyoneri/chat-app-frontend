@@ -32,7 +32,7 @@ export default function ImageInputLabel({
           id={name}
           className="hidden"
         />
-        <p className="rounded-sm bg-tertiary px-2 py-1 text-neutral-300 placeholder:text-sm autofill:bg-tertiary focus:outline-none">
+        <p className="rounded-sm bg-tertiary p-2 text-sm text-neutral-200">
           {placeHolder}
         </p>
         {errorMessage && (

@@ -1,5 +1,6 @@
 "use client";
 
+import MailSentIllustration from "@/app/assets/illustrations/mail-sent";
 import ImageInputLabel from "@/components/input-labels/image-input-label";
 import PasswordInputLabel from "@/components/input-labels/password-input-label";
 import TextInputLabel from "@/components/input-labels/text-input-label";
@@ -9,7 +10,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { mixed, object, ref, string } from "yup";
-import MailSentIllustration from "../assets/illustrations/mail-sent";
 
 const loginSchema = object({
   name: string().required("Name is required"),
@@ -224,7 +224,10 @@ export default function RegisterPage() {
 
         <span className="dui-divider text-sm">Already a user?</span>
 
-        <Link href="/" className="mx-auto transition hover:text-accent">
+        <Link
+          href="/auth/signin"
+          className="mx-auto transition hover:text-accent"
+        >
           Login
         </Link>
       </main>
