@@ -9,7 +9,7 @@ import { object, string } from "yup";
 import ResetPasswordRequest from "../assets/illustrations/reset-password-request";
 
 const loginSchema = object({
-  email: string().required("Email is required"),
+  email: string().email("Email is invalid").required("Email is required"),
 });
 
 export default function ForgoPasswordPage() {

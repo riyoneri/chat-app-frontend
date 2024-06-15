@@ -12,7 +12,8 @@ import MailSentIllustration from "../assets/illustrations/mail-sent";
 
 const loginSchema = object({
   name: string().required("Name is required"),
-  username: string().required("Email or Username is required"),
+  username: string().required("Username is required"),
+  email: string().email("Email is invalid").required("Email is required"),
   password: string()
     .required("Password not strong")
     .matches(/[A-Z]/, "Password not strong")
@@ -166,9 +167,16 @@ export default function RegisterPage() {
 
           <TextInputLabel
             register={register("username")}
-            name="email"
-            placeHolder="Email / Username"
+            name="username"
+            placeHolder="Username"
             errorMessage={errors.username?.message}
+          />
+
+          <TextInputLabel
+            register={register("email")}
+            name="email"
+            placeHolder="Email"
+            errorMessage={errors.email?.message}
           />
 
           <PasswordInputLabel
