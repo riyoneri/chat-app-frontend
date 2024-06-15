@@ -21,14 +21,20 @@ export default function ImageInputLabel({
 }: ImageInputLabelProperties) {
   return (
     <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center">
-      <label htmlFor={name} className={classNames("grid flex-1", className)}>
+      <label
+        htmlFor={name}
+        className={classNames("grid flex-1 cursor-pointer", className)}
+      >
         <input
           type="file"
           {...register}
           placeholder={placeHolder}
           id={name}
-          className="rounded-sm bg-tertiary px-2 py-1 placeholder:text-sm autofill:bg-tertiary focus:outline-none"
+          className="hidden"
         />
+        <p className="rounded-sm bg-tertiary px-2 py-1 text-neutral-300 placeholder:text-sm autofill:bg-tertiary focus:outline-none">
+          {placeHolder}
+        </p>
         {errorMessage && (
           <span className="text-sm text-red-700">{errorMessage}</span>
         )}

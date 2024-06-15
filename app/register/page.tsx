@@ -196,7 +196,7 @@ export default function RegisterPage() {
           <ImageInputLabel
             name="image"
             className="justify-stretch"
-            placeHolder="Enter your profile image"
+            placeHolder="Enter your profile picture"
             register={register("image")}
             errorMessage={errors.image?.message}
             currentImage={watch("image")?.[0]}
