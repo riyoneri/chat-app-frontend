@@ -4,8 +4,11 @@ import PasswordInputLabel from "@/components/input-labels/password-input-label";
 import TextInputLabel from "@/components/input-labels/text-input-label";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { object, ref, string } from "yup";
+import MailSentIllustration from "../assets/illustrations/mail-sent";
 
 const loginSchema = object({
   name: string().required("Name is required"),
@@ -29,9 +32,13 @@ export default function RegisterPage() {
     watch,
     formState: { errors },
   } = useForm({ resolver: yupResolver(loginSchema) });
+  const [modalOpen, setModalOpen] = useState(false);
+  const router = useRouter();
 
   // eslint-disable-next-line unicorn/consistent-function-scoping
-  const submitHandler = (_data: object) => {};
+  const submitHandler = (_data: object) => {
+    setModalOpen(true);
+  };
 
   const passwordValue = watch("password");
 
@@ -96,6 +103,52 @@ export default function RegisterPage() {
   return (
     <>
       <title>Register</title>
+      <input
+        type="checkbox"
+        checked={modalOpen}
+        readOnly
+        id="mail_sent"
+        className="dui-modal-toggle"
+      />
+      <dialog
+        id="mail_sent"
+        className="dui-modal dui-modal-middle"
+        role="dialog"
+      >
+        <div className="dui-modal-box flex flex-col items-center text-xs sm:text-sm">
+          <button
+            className="self-end"
+            onClick={() => {
+              router.push("/");
+            }}
+          >
+            ✕
+          </button>
+
+          <MailSentIllustration className="w-5/6 xs:w-1/2" />
+
+          <h2 className="my-5 font-medium xs:text-lg sm:text-xl">
+            Email Confirmation
+          </h2>
+
+          <div className="space-y-2 text-pretty text-center">
+            <p>
+              🎉 Registration Successful! To get started, please check your
+              email inbox for a verification message from us. Click on the
+              verification link to confirm your email address.
+            </p>
+          </div>
+          <div className="dui-divider"></div>
+          <p className="text-center">
+            Didn’t receive the email? Click{" "}
+            <button className="text-accent">here</button> to resend the
+            verification email.
+          </p>
+        </div>
+        <label className="dui-modal-backdrop bg-black/80" htmlFor="my_modal_7">
+          Close
+        </label>
+      </dialog>
       <main className="mx-auto flex w-full flex-col justify-center sm:w-2/3 md:w-1/2">
         <h3 className="text-center text-2xl font-medium">
           Register new account
