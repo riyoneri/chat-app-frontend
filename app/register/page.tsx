@@ -94,54 +94,62 @@ export default function RegisterPage() {
   ];
 
   return (
-    <main className="mx-auto flex w-full flex-col justify-center sm:w-2/3 md:w-1/2">
-      <h3 className="text-center text-2xl font-medium">Register new account</h3>
-      <form className="mt-5 grid gap-3" onSubmit={handleSubmit(submitHandler)}>
-        <TextInputLabel
-          register={register("name")}
-          name="name"
-          placeHolder="Name"
-          errorMessage={errors.name?.message}
-        />
-
-        <TextInputLabel
-          register={register("username")}
-          name="email"
-          placeHolder="Email / Username"
-          errorMessage={errors.username?.message}
-        />
-
-        <PasswordInputLabel
-          register={register("password")}
-          name="password"
-          placeHolder="Password"
-          errorMessage={errors.password?.message}
-          validations={passwordValidations}
-        />
-
-        <PasswordInputLabel
-          register={register("confirmPassword")}
-          name="confirmPassword"
-          placeHolder="Confirm password"
-          errorMessage={errors.confirmPassword?.message}
-        />
-        <Link
-          href="/forgot-password"
-          className="-mt-2 ml-auto text-sm transition hover:text-accent"
+    <>
+      <title>Register</title>
+      <main className="mx-auto flex w-full flex-col justify-center sm:w-2/3 md:w-1/2">
+        <h3 className="text-center text-2xl font-medium">
+          Register new account
+        </h3>
+        <form
+          className="mt-5 grid gap-3"
+          onSubmit={handleSubmit(submitHandler)}
         >
-          Forgot password?
+          <TextInputLabel
+            register={register("name")}
+            name="name"
+            placeHolder="Name"
+            errorMessage={errors.name?.message}
+          />
+
+          <TextInputLabel
+            register={register("username")}
+            name="email"
+            placeHolder="Email / Username"
+            errorMessage={errors.username?.message}
+          />
+
+          <PasswordInputLabel
+            register={register("password")}
+            name="password"
+            placeHolder="Password"
+            errorMessage={errors.password?.message}
+            validations={passwordValidations}
+          />
+
+          <PasswordInputLabel
+            register={register("confirmPassword")}
+            name="confirmPassword"
+            placeHolder="Confirm password"
+            errorMessage={errors.confirmPassword?.message}
+          />
+          <Link
+            href="/forgot-password"
+            className="-mt-2 ml-auto text-sm transition hover:text-accent"
+          >
+            Forgot password?
+          </Link>
+
+          <button className="rounded-sm bg-secondary py-1 transition hover:bg-secondary/80">
+            Register
+          </button>
+        </form>
+
+        <span className="dui-divider text-sm">Already a user?</span>
+
+        <Link href="/" className="mx-auto transition hover:text-accent">
+          Login
         </Link>
-
-        <button className="rounded-sm bg-secondary py-1 transition hover:bg-secondary/80">
-          Register
-        </button>
-      </form>
-
-      <span className="dui-divider text-sm">Already a user?</span>
-
-      <Link href="/" className="mx-auto transition hover:text-accent">
-        Login
-      </Link>
-    </main>
+      </main>
+    </>
   );
 }

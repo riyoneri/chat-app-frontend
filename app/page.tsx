@@ -23,38 +23,44 @@ export default function LoginPage() {
   const submitHandler = (_data: object) => {};
 
   return (
-    <main className="mx-auto flex w-full flex-col justify-center sm:w-2/3 md:w-1/2">
-      <h3 className="text-center text-2xl font-medium">Sign in to the app</h3>
-      <form className="mt-5 grid gap-3" onSubmit={handleSubmit(submitHandler)}>
-        <TextInputLabel
-          register={register("username")}
-          name="email"
-          placeHolder="Email / Username"
-          errorMessage={errors.username?.message}
-        />
-        <PasswordInputLabel
-          register={register("password")}
-          name="password"
-          placeHolder="Password"
-          errorMessage={errors.password?.message}
-        />
-        <Link
-          href="/forgot-password"
-          className="-mt-2 ml-auto text-sm transition hover:text-accent"
+    <>
+      <title>Sign In</title>
+      <main className="mx-auto flex w-full flex-col justify-center sm:w-2/3 md:w-1/2">
+        <h3 className="text-center text-2xl font-medium">Sign in to the app</h3>
+        <form
+          className="mt-5 grid gap-3"
+          onSubmit={handleSubmit(submitHandler)}
         >
-          Forgot password?
+          <TextInputLabel
+            register={register("username")}
+            name="email"
+            placeHolder="Email / Username"
+            errorMessage={errors.username?.message}
+          />
+          <PasswordInputLabel
+            register={register("password")}
+            name="password"
+            placeHolder="Password"
+            errorMessage={errors.password?.message}
+          />
+          <Link
+            href="/forgot-password"
+            className="-mt-2 ml-auto text-sm transition hover:text-accent"
+          >
+            Forgot password?
+          </Link>
+
+          <button className="rounded-sm bg-secondary py-1 transition hover:bg-secondary/80">
+            Sign In
+          </button>
+        </form>
+
+        <span className="dui-divider text-sm">No Account?</span>
+
+        <Link href="/register" className="mx-auto transition hover:text-accent">
+          Register
         </Link>
-
-        <button className="rounded-sm bg-secondary py-1 transition hover:bg-secondary/80">
-          Sign In
-        </button>
-      </form>
-
-      <span className="dui-divider text-sm">No Account?</span>
-
-      <Link href="/register" className="mx-auto transition hover:text-accent">
-        Register
-      </Link>
-    </main>
+      </main>
+    </>
   );
 }
