@@ -12,7 +12,7 @@ const loginSchema = object({
   password: string().required("Password is required"),
 });
 
-export default function Home() {
+export default function LoginPage() {
   const {
     register,
     handleSubmit,
