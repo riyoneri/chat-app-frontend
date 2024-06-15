@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .dui-checkbox:disabled {
+    border-width: 0px;
+    cursor: default;
+    border-color: transparent;
+    --tw-bg-opacity: 1;
+    background-color: var(
+      --fallback-bc,
+      oklch(var(--bc) / var(--tw-bg-opacity))
+    );
+    opacity: 1;
+  }
+}
