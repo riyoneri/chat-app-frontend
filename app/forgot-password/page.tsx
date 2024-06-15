@@ -29,7 +29,7 @@ export default function ForgoPasswordPage() {
 
   return (
     <>
-      <title>Reset Password</title>
+      <title>Request reset</title>
       <input
         type="checkbox"
         checked={modalOpen}
@@ -68,7 +68,7 @@ export default function ForgoPasswordPage() {
         </label>
       </dialog>
       <main className="mx-auto flex w-full flex-col justify-center sm:w-2/3 md:w-1/2 lg:w-1/3">
-        <h3 className="text-center text-2xl font-medium">Reset Password</h3>
+        <h3 className="text-center text-2xl font-medium">Request reset</h3>
         <form
           className="mt-5 grid gap-3"
           onSubmit={handleSubmit(submitHandler)}
@@ -81,7 +81,7 @@ export default function ForgoPasswordPage() {
           />
 
           <button className="rounded-sm bg-secondary py-1 transition hover:bg-secondary/80">
-            Reset
+            Request
           </button>
         </form>
 
