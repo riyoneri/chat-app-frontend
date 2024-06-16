@@ -50,7 +50,6 @@ export default function RegisterPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const router = useRouter();
 
-  // eslint-disable-next-line unicorn/consistent-function-scoping
   const submitHandler = (_data: object) => {
     setModalOpen(true);
   };
