@@ -12,6 +12,7 @@ const config: Config = {
       },
       screens: {
         xs: "400px",
+        "3xl": "1920px",
       },
     },
   },
