@@ -2,9 +2,13 @@
 
 import NavigationBar from "@/components/navigation-bar";
 import classNames from "classnames";
+import TimeAgo from "javascript-time-ago";
+import en from "javascript-time-ago/locale/en";
 import { Montserrat } from "next/font/google";
 import { usePathname } from "next/navigation";
 import "./globals.css";
+
+TimeAgo.addDefaultLocale(en);
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
