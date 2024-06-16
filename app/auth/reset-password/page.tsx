@@ -8,7 +8,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { object, ref, string } from "yup";
 
-const loginSchema = object({
+const resetPasswordFormSchema = object({
   password: string()
     .required("Password not strong")
     .matches(/[A-Z]/, "Password not strong")
@@ -28,7 +28,7 @@ export default function ForgoPasswordPage() {
     reset,
     watch,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(loginSchema) });
+  } = useForm({ resolver: yupResolver(resetPasswordFormSchema) });
   const [modalOpen, setModalOpen] = useState(false);
 
   // eslint-disable-next-line unicorn/consistent-function-scoping

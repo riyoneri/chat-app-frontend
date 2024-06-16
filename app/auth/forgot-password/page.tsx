@@ -8,7 +8,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { object, string } from "yup";
 
-const loginSchema = object({
+const forgotPasswordFormSchema = object({
   email: string().email("Email is invalid").required("Email is required"),
 });
 
@@ -18,7 +18,7 @@ export default function ForgoPasswordPage() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(loginSchema) });
+  } = useForm({ resolver: yupResolver(forgotPasswordFormSchema) });
   const [modalOpen, setModalOpen] = useState(false);
 
   // eslint-disable-next-line unicorn/consistent-function-scoping

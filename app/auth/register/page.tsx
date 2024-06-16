@@ -11,7 +11,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { mixed, object, ref, string } from "yup";
 
-const loginSchema = object({
+const registerFormSchema = object({
   name: string().required("Name is required"),
   username: string().required("Username is required"),
   email: string().email("Email is invalid").required("Email is required"),
@@ -46,7 +46,7 @@ export default function RegisterPage() {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(loginSchema) });
+  } = useForm({ resolver: yupResolver(registerFormSchema) });
   const [modalOpen, setModalOpen] = useState(false);
   const router = useRouter();
 

@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { object, string } from "yup";
 
-const loginSchema = object({
+const signinFormSchema = object({
   username: string().required("Email or Username is required"),
   password: string().required("Password is required"),
 });
@@ -17,7 +17,7 @@ export default function LoginPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(loginSchema) });
+  } = useForm({ resolver: yupResolver(signinFormSchema) });
 
   // eslint-disable-next-line unicorn/consistent-function-scoping
   const submitHandler = (_data: object) => {};
