@@ -6,7 +6,7 @@ import { TiMessages } from "react-icons/ti";
 
 export default function NavigationBar() {
   return (
-    <nav className="relative grid place-content-center gap-3 bg-secondary/50 px-2 text-xl *:rounded-md *:bg-white/10 *:p-2 *:transition sm:*:p-3">
+    <nav className="relative grid place-content-center gap-3 bg-secondary/50 px-2 text-xl *:rounded-md *:bg-white/10 *:p-2 *:transition sm:*:p-3 3xl:place-content-start 3xl:py-2">
       <Link href="/chat" className="hover:bg-red-500">
         <TiMessages />
       </Link>
@@ -18,7 +18,7 @@ export default function NavigationBar() {
       </Link>
 
       <div
-        className="dui-tooltip dui-tooltip-right absolute bottom-2 left-1/2 grid -translate-x-1/2 place-content-center text-sm xs:text-base xs:leading-4"
+        className="dui-tooltip dui-tooltip-right absolute bottom-2 left-1/2 grid -translate-x-1/2 place-content-center text-sm xs:text-base xs:leading-4 3xl:relative 3xl:bottom-0"
         data-tip="Logout"
       >
         <button>
