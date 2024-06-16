@@ -19,7 +19,10 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className="bg-neutral-600 scrollbar-track-neutral-700 scrollbar-thumb-accent"
+    >
       <body
         className={classNames(
           montserrat.className,
