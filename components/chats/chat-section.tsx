@@ -12,7 +12,7 @@ import UserListItem from "./user-list-item";
 const Chats = [
   {
     id: "1",
-    href: "/",
+    href: "/chat/1",
     image: avatarPlaceholder,
     name: "Lionel Kaneza",
     lastMessage: {
@@ -23,7 +23,7 @@ const Chats = [
   },
   {
     id: "2",
-    href: "/",
+    href: "/chat/2",
     image: avatarPlaceholder,
     name: "John Doe",
     lastMessage: {
