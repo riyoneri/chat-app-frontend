@@ -26,7 +26,7 @@ export default function RootLayout({
       <body
         className={classNames(
           montserrat.className,
-          "bg-neutral-900 max-w-screen-2xl mx-auto text-white min-h-dvh flex",
+          "bg-neutral-900 max-w-screen-2xl overflow-hidden mx-auto text-white min-h-dvh flex",
         )}
       >
         {!pathname.includes("auth") && pathname !== "/" && <NavigationBar />}
