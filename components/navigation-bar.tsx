@@ -17,14 +17,12 @@ export default function NavigationBar() {
         <IoCall />
       </Link>
 
-      <div
-        className="dui-tooltip dui-tooltip-right absolute bottom-2 left-1/2 grid -translate-x-1/2 place-content-center text-sm xs:text-base xs:leading-4 3xl:relative 3xl:bottom-0"
+      <button
+        className="dui-tooltip dui-tooltip-right absolute bottom-2 left-1/2 z-10 grid -translate-x-1/2 place-content-center text-sm xs:text-base xs:leading-4 3xl:relative 3xl:bottom-0"
         data-tip="Logout"
       >
-        <button>
-          <FaPowerOff />
-        </button>
-      </div>
+        <FaPowerOff />
+      </button>
     </nav>
   );
 }
