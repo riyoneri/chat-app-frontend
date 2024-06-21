@@ -8,7 +8,9 @@ import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import { Montserrat } from "next/font/google";
 import { usePathname } from "next/navigation";
+import { Provider } from "react-redux";
 import "./globals.css";
+import { store } from "./store";
 
 TimeAgo.addDefaultLocale(en);
 
@@ -34,8 +36,12 @@ export default function RootLayout({
         )}
       >
         <QueryClientProvider client={queryClient}>
-          {!pathname.includes("auth") && pathname !== "/" && <NavigationBar />}
-          <main className="flex-1 *:h-full">{children}</main>
+          <Provider store={store}>
+            {!pathname.includes("auth") && pathname !== "/" && (
+              <NavigationBar />
+            )}
+            <main className="flex-1 *:h-full">{children}</main>
+          </Provider>
 
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
