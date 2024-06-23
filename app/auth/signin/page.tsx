@@ -1,26 +1,59 @@
 "use client";
 
+import { fetcher } from "@/app/helpers/fetcher";
 import PasswordInputLabel from "@/components/input-labels/password-input-label";
 import TextInputLabel from "@/components/input-labels/text-input-label";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { object, string } from "yup";
 
+interface SigninFormData {
+  emailOrUsername: string;
+  password: string;
+}
+
+interface ResponseError {
+  message: {
+    email?: { location: string; message: string };
+    password?: { location: string; message: string };
+  };
+  errorMessage: string;
+}
+
 const signinFormSchema = object({
-  username: string().required("Email or Username is required"),
+  emailOrUsername: string().required("Email or Username is required"),
   password: string().required("Password is required"),
 });
 
 export default function LoginPage() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(signinFormSchema) });
+  const { data, isPending, error, mutate } = useMutation<
+    { user: UserDto; token: string },
+    ResponseError,
+    SigninFormData
+  >({
+    mutationFn: async (data: SigninFormData) =>
+      fetcher({
+        url: "/auth/login",
+        body: JSON.stringify(data),
+        method: "POST",
+      }),
+  });
 
-  // eslint-disable-next-line unicorn/consistent-function-scoping
-  const submitHandler = (_data: object) => {};
+  useEffect(() => {
+    if (data) router.replace("/");
+  }, [data, router]);
+
+  const submitHandler = (data: SigninFormData) => mutate(data);
 
   return (
     <>
@@ -32,16 +65,20 @@ export default function LoginPage() {
           onSubmit={handleSubmit(submitHandler)}
         >
           <TextInputLabel
-            register={register("username")}
+            register={register("emailOrUsername")}
             name="email"
             placeHolder="Email / Username"
-            errorMessage={errors.username?.message}
+            errorMessage={
+              errors.emailOrUsername?.message || error?.message?.email?.message
+            }
           />
           <PasswordInputLabel
             register={register("password")}
             name="password"
             placeHolder="Password"
-            errorMessage={errors.password?.message}
+            errorMessage={
+              errors.password?.message || error?.message?.password?.message
+            }
           />
           <Link
             href="/auth/forgot-password"
@@ -50,8 +87,20 @@ export default function LoginPage() {
             Forgot password?
           </Link>
 
-          <button className="rounded-sm bg-secondary py-1 transition hover:bg-secondary/80">
-            Sign In
+          {error?.errorMessage && (
+            <span className="-my-2 text-center text-xs text-red-500">
+              {error.errorMessage}
+            </span>
+          )}
+          <button
+            disabled={isPending || !!data}
+            className="flex justify-center  rounded-sm bg-secondary py-1 transition hover:bg-secondary/80"
+          >
+            {isPending ? (
+              <span className="dui-loading content-center py-0"></span>
+            ) : (
+              <span>Sign In</span>
+            )}
           </button>
         </form>
 
