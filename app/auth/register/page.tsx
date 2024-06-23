@@ -1,15 +1,33 @@
 "use client";
 
 import MailSentIllustration from "@/app/assets/illustrations/mail-sent";
+import { fetcher } from "@/app/helpers/fetcher";
 import ImageInputLabel from "@/components/input-labels/image-input-label";
 import PasswordInputLabel from "@/components/input-labels/password-input-label";
 import TextInputLabel from "@/components/input-labels/text-input-label";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { mixed, object, ref, string } from "yup";
+
+interface RegisterFormData {
+  [key: string]: string | FileList;
+}
+
+interface ResponseError {
+  message: {
+    name?: { location: string; message: string };
+    username?: { location: string; message: string };
+    email?: { location: string; message: string };
+    image?: { location: string; message: string };
+    password?: { location: string; message: string };
+    confirmPassword?: { location: string; message: string };
+  };
+  errorMessage: string;
+}
 
 const registerFormSchema = object({
   name: string().required("Name is required"),
@@ -50,9 +68,34 @@ export default function RegisterPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const router = useRouter();
 
-  const submitHandler = (_data: object) => {
-    setModalOpen(true);
+  const { data, isPending, error, mutate } = useMutation<
+    UserDto,
+    ResponseError,
+    FormData
+  >({
+    mutationFn: (data: FormData) =>
+      fetcher({ url: "/auth/register", body: data, method: "POST" }),
+  });
+
+  const submitHandler = (data: RegisterFormData) => {
+    const formData = new FormData();
+
+    for (const key of Object.keys(data)) {
+      if (data[key] instanceof FileList) {
+        formData.append(key, data[key][0]);
+        continue;
+      }
+
+      formData.append(key, data[key]);
+    }
+
+    formData.append("redirectUrl", process.env.NEXT_PUBLIC_LOCAL_URL!);
+    mutate(formData);
   };
+
+  useEffect(() => {
+    if (data) setModalOpen(true);
+  }, [data]);
 
   const passwordValue = watch("password");
 
@@ -175,21 +218,25 @@ export default function RegisterPage() {
             register={register("name")}
             name="name"
             placeHolder="Name"
-            errorMessage={errors.name?.message}
+            errorMessage={errors.name?.message || error?.message?.name?.message}
           />
 
           <TextInputLabel
             register={register("username")}
             name="username"
             placeHolder="Username"
-            errorMessage={errors.username?.message}
+            errorMessage={
+              errors.username?.message || error?.message?.username?.message
+            }
           />
 
           <TextInputLabel
             register={register("email")}
             name="email"
             placeHolder="Email"
-            errorMessage={errors.email?.message}
+            errorMessage={
+              errors.email?.message || error?.message?.email?.message
+            }
           />
 
           <ImageInputLabel
@@ -197,7 +244,9 @@ export default function RegisterPage() {
             className="justify-stretch"
             placeHolder="Enter your profile picture"
             register={register("image")}
-            errorMessage={errors.image?.message}
+            errorMessage={
+              errors.image?.message || error?.message?.image?.message
+            }
             currentImage={watch("image")?.[0]}
           />
 
@@ -205,7 +254,9 @@ export default function RegisterPage() {
             register={register("password")}
             name="password"
             placeHolder="Password"
-            errorMessage={errors.password?.message}
+            errorMessage={
+              errors.password?.message || error?.message?.password?.message
+            }
             validations={passwordValidations}
           />
 
@@ -213,11 +264,26 @@ export default function RegisterPage() {
             register={register("confirmPassword")}
             name="confirmPassword"
             placeHolder="Confirm password"
-            errorMessage={errors.confirmPassword?.message}
+            errorMessage={
+              errors.confirmPassword?.message ||
+              error?.message?.confirmPassword?.message
+            }
           />
 
-          <button className="rounded-sm bg-secondary py-1 transition hover:bg-secondary/80">
-            Register
+          {error?.errorMessage && (
+            <span className=" text-center text-xs text-red-500">
+              {error.errorMessage}
+            </span>
+          )}
+          <button
+            disabled={isPending || !!data}
+            className="rounded-sm bg-secondary py-1 transition hover:bg-secondary/80"
+          >
+            {isPending ? (
+              <span className="dui-loading content-center py-0"></span>
+            ) : (
+              <span>Register</span>
+            )}
           </button>
         </form>
 
