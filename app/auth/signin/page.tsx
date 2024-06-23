@@ -12,13 +12,12 @@ import { useForm } from "react-hook-form";
 import { object, string } from "yup";
 
 interface SigninFormData {
-  emailOrUsername: string;
-  password: string;
+  [key: string]: string;
 }
 
 interface ResponseError {
   message: {
-    email?: { location: string; message: string };
+    emailOrUsername?: { location: string; message: string };
     password?: { location: string; message: string };
   };
   errorMessage: string;
@@ -41,7 +40,7 @@ export default function LoginPage() {
     ResponseError,
     SigninFormData
   >({
-    mutationFn: async (data: SigninFormData) =>
+    mutationFn: (data: SigninFormData) =>
       fetcher({
         url: "/auth/login",
         body: JSON.stringify(data),
@@ -69,7 +68,8 @@ export default function LoginPage() {
             name="email"
             placeHolder="Email / Username"
             errorMessage={
-              errors.emailOrUsername?.message || error?.message?.email?.message
+              errors?.emailOrUsername?.message ||
+              error?.message?.emailOrUsername?.message
             }
           />
           <PasswordInputLabel
@@ -77,7 +77,7 @@ export default function LoginPage() {
             name="password"
             placeHolder="Password"
             errorMessage={
-              errors.password?.message || error?.message?.password?.message
+              errors?.password?.message || error?.message?.password?.message
             }
           />
           <Link
