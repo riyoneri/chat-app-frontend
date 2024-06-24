@@ -80,12 +80,12 @@ export default function LoginPage() {
               errors?.password?.message || error?.message?.password?.message
             }
           />
-          <Link
+          {/* <Link
             href="/auth/forgot-password"
             className="-mt-2 ml-auto text-sm transition hover:text-accent"
           >
             Forgot password?
-          </Link>
+          </Link> */}
 
           {error?.errorMessage && (
             <span className="-my-2 text-center text-xs text-red-500">
