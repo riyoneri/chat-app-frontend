@@ -32,6 +32,12 @@ export const fetcher = async ({ url, body, method = "GET" }: FetcherData) => {
     return data;
   } catch (error) {
     const typedError = error as Error;
-    throw { errorMessage: typedError?.message, ...typedError };
+    throw {
+      errorMessage:
+        typeof typedError?.message === "string"
+          ? typedError.message
+          : undefined,
+      ...typedError,
+    };
   }
 };

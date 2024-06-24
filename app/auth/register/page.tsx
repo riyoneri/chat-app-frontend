@@ -51,8 +51,8 @@ const registerFormSchema = object({
     )
     .test(
       "fileSize",
-      "Image size must be less than or equal to 2MB",
-      (fileList) => fileList[0]?.size <= 2_000_000,
+      "Image size must be less than or equal to 1MB",
+      (fileList) => fileList[0]?.size <= 1_000_000,
     ),
   password: string()
     .required("Password not strong")
@@ -74,7 +74,7 @@ export default function RegisterPage() {
     getValues,
     formState: { errors },
   } = useForm({ resolver: yupResolver(registerFormSchema) });
-  const [modalOpen, setModalOpen] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
   const router = useRouter();
 
   const {
@@ -118,7 +118,10 @@ export default function RegisterPage() {
       formData.append(key, data[key]);
     }
 
-    formData.append("redirectUrl", process.env.NEXT_PUBLIC_LOCAL_URL!);
+    formData.append(
+      "redirectUrl",
+      `${process.env.NEXT_PUBLIC_LOCAL_URL}/auth/confirm-email`,
+    );
     registerMutate(formData);
   };
 
@@ -217,7 +220,7 @@ export default function RegisterPage() {
           <button
             className="self-end"
             onClick={() => {
-              router.push("/");
+              router.push("/auth/signin");
             }}
           >
             ✕
@@ -244,7 +247,7 @@ export default function RegisterPage() {
               onClick={() =>
                 resendMutate({
                   email: getValues("email"),
-                  redirectUrl: process.env.NEXT_PUBLIC_LOCAL_URL!,
+                  redirectUrl: `${process.env.NEXT_PUBLIC_LOCAL_URL}/auth/confirm-email`,
                 })
               }
               className="text-accent"
