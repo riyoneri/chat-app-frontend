@@ -49,6 +49,7 @@ export default function RootLayout({
               Components={{ success: styledMaterialDesignContent }}
               maxSnack={3}
               autoHideDuration={3000}
+              anchorOrigin={{ vertical: "top", horizontal: "right" }}
             >
               {!pathname.includes("auth") && pathname !== "/" && (
                 <NavigationBar />
