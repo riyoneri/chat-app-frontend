@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useReadLocalStorage } from "usehooks-ts";
+import { authActions } from "../store/slices/auth.slice";
+import { useAppDispatch } from "./store-hooks";
 
 export default function useLocalstorageData() {
   const tokenReference = useRef("");
   const userReference = useRef("");
   const [isUserValid, setIsUserValid] = useState(false);
+  const dispatch = useAppDispatch();
 
   const token = useReadLocalStorage<string>("_o");
   const user = useReadLocalStorage("_e", {
@@ -41,6 +44,7 @@ export default function useLocalstorageData() {
     return;
   }
 
+  dispatch(authActions.signin(user));
   return {
     token,
     user,
