@@ -3,8 +3,9 @@
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
-import { useLocalStorage } from "usehooks-ts";
+import { useAppSelector } from "../hooks/store-hooks";
 import useLocalstorageData from "../hooks/use-localstorage-data";
+import useLogout from "../hooks/use-logout";
 
 export default function AuthLayout({
   children,
@@ -14,18 +15,21 @@ export default function AuthLayout({
   const data = useLocalstorageData();
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
-  const [, setTokenValue] = useLocalStorage("_o", "");
-  const [, setUserValue] = useLocalStorage("_e", "");
+  const [alertShown, setAlertShown] = useState(false);
+  const logout = useLogout();
+  const authData = useAppSelector((state) => state.auth.id);
 
   useEffect(() => {
     setIsMounted(true);
-    if (!data && isMounted) {
-      setTokenValue("");
-      setUserValue("");
-      enqueueSnackbar({ message: "Login first!", variant: "error" });
-      router.replace("/auth/signin");
+    if ((!data || !authData) && isMounted) {
+      logout();
+      authData &&
+        enqueueSnackbar({ message: "Login first!", variant: "error" });
+      setAlertShown(true);
     }
-  }, [data, isMounted, router, setTokenValue, setUserValue]);
+
+    return () => setIsMounted(false);
+  }, [alertShown, authData, data, isMounted, logout, router]);
 
   return (
     <>
