@@ -1,4 +1,4 @@
-import ChatsIllustration from "../assets/illustrations/chats";
+import ChatsIllustration from "@/app/assets/illustrations/chats";
 
 import ChatSection from "@/components/chats/chat-section";
 
