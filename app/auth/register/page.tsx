@@ -15,6 +15,12 @@ import { useForm } from "react-hook-form";
 import { mixed, object, ref, string } from "yup";
 
 interface RegisterFormData {
+  name: string;
+  username: string;
+  email: string;
+  image: FileList;
+  password: string;
+  confirmPassword: string;
   [key: string]: string | FileList;
 }
 
@@ -109,14 +115,13 @@ export default function RegisterPage() {
 
   const submitHandler = (data: RegisterFormData) => {
     const formData = new FormData();
-    for (const key of Object.keys(data)) {
-      if (data[key] instanceof FileList) {
-        formData.append(key, data[key][0]);
-        continue;
-      }
 
-      formData.append(key, data[key]);
-    }
+    formData.append("name", data.name);
+    formData.append("username", data.username);
+    formData.append("email", data.email);
+    formData.append("image", data.image[0]);
+    formData.append("password", data.password);
+    formData.append("confirmPassword", data.confirmPassword);
 
     formData.append(
       "redirectUrl",
