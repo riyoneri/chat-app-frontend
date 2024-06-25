@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "../hooks/store-hooks";
@@ -13,7 +12,6 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   const data = useLocalstorageData();
-  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [alertShown, setAlertShown] = useState(false);
   const logout = useLogout();
@@ -21,15 +19,13 @@ export default function AuthLayout({
 
   useEffect(() => {
     setIsMounted(true);
-    if ((!data || !authData) && isMounted) {
+    if (!data && isMounted && !alertShown) {
       logout();
       authData &&
         enqueueSnackbar({ message: "Login first!", variant: "error" });
       setAlertShown(true);
     }
-
-    return () => setIsMounted(false);
-  }, [alertShown, authData, data, isMounted, logout, router]);
+  }, [alertShown, authData, data, isMounted, logout]);
 
   return (
     <>
