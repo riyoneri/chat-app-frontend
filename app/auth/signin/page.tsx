@@ -1,6 +1,8 @@
 "use client";
 
 import { fetcher } from "@/app/helpers/fetcher";
+import { useAppDispatch } from "@/app/hooks/store-hooks";
+import { authActions } from "@/app/store/slices/auth.slice";
 import PasswordInputLabel from "@/components/input-labels/password-input-label";
 import TextInputLabel from "@/components/input-labels/text-input-label";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -41,6 +43,7 @@ export default function LoginPage() {
       },
     },
   );
+  const dispatch = useAppDispatch();
 
   const {
     register,
@@ -64,9 +67,10 @@ export default function LoginPage() {
     if (data) {
       setTokenValue(data.token);
       setUserValue(data.user);
+      dispatch(authActions.signin(data.user));
       router.replace("/");
     }
-  }, [data, router, setTokenValue, setUserValue]);
+  }, [data, dispatch, router, setTokenValue, setUserValue]);
 
   const submitHandler = (data: SigninFormData) => mutate(data);
 
