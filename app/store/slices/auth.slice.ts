@@ -1,10 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+const initialState: Partial<UserDto> = {};
 
 const authSlice = createSlice({
   name: "auth",
-  initialState: {},
+  initialState,
   reducers: {
-    signin: (_state) => {},
+    signin: (_state, action: PayloadAction<UserDto>) => action.payload,
     signout: (_state) => ({}),
   },
 });
