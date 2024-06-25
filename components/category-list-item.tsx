@@ -1,4 +1,4 @@
-import { Category } from "@/app/page";
+import { Category } from "@/app/(protected)/page";
 import classNames from "classnames";
 import Link from "next/link";
 
