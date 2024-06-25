@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useLocalStorage } from "usehooks-ts";
 import { object, string } from "yup";
 
 interface SigninFormData {
@@ -30,6 +31,17 @@ const signinFormSchema = object({
 
 export default function LoginPage() {
   const router = useRouter();
+  const [, setTokenValue] = useLocalStorage("_o", "");
+  const [, setUserValue] = useLocalStorage(
+    "_e",
+    {},
+    {
+      serializer(value) {
+        return JSON.stringify(value);
+      },
+    },
+  );
+
   const {
     register,
     handleSubmit,
@@ -49,8 +61,12 @@ export default function LoginPage() {
   });
 
   useEffect(() => {
-    if (data) router.replace("/");
-  }, [data, router]);
+    if (data) {
+      setTokenValue(data.token);
+      setUserValue(data.user);
+      router.replace("/");
+    }
+  }, [data, router, setTokenValue, setUserValue]);
 
   const submitHandler = (data: SigninFormData) => mutate(data);
 
@@ -93,8 +109,8 @@ export default function LoginPage() {
             </span>
           )}
           <button
-            disabled={isPending || !!data}
-            className="flex justify-center  rounded-sm bg-secondary py-1 transition hover:bg-secondary/80"
+            disabled={isPending}
+            className="flex justify-center rounded-sm bg-secondary py-1 transition hover:bg-secondary/80"
           >
             {isPending ? (
               <span className="dui-loading content-center py-0"></span>

@@ -345,7 +345,7 @@ export default function RegisterPage() {
           )}
           <button
             disabled={registerPending || !!registerData}
-            className="rounded-sm bg-secondary py-1 transition hover:bg-secondary/80"
+            className="flex justify-center rounded-sm bg-secondary py-1 transition hover:bg-secondary/80"
           >
             {registerPending ? (
               <span className="dui-loading content-center py-0"></span>
