@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import avatarPlaceholder from "@/app/assets/images/avatar.png";
+import { useAppSelector } from "@/app/hooks/store-hooks";
 import classNames from "classnames";
 import { useState } from "react";
 import { TbMessagePlus } from "react-icons/tb";
@@ -64,6 +65,9 @@ const Users: UserDto[] = [
 export default function ChatSection({ className }: { className?: string }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [filter, setFilter] = useState<"active" | "all">("all");
+
+  const user = useAppSelector((state) => state.auth);
+
   return (
     <>
       <input
@@ -109,13 +113,13 @@ export default function ChatSection({ className }: { className?: string }) {
             <Image
               draggable="false"
               alt="Image"
-              src={avatarPlaceholder}
+              src={user.imageUrl!}
               className="size-8 rounded-full"
               width={100}
               height={100}
             />
             <span className="line-clamp-1 text-sm font-semibold">
-              Lionel Kaneza
+              {user.name}
             </span>
           </div>
           <button className="text-xl" onClick={() => setModalOpen(true)}>
