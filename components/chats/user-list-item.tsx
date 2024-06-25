@@ -1,12 +1,12 @@
 import Image from "next/image";
 
-export default function UserListItem({ image, name, username }: UserDto) {
+export default function UserListItem({ imageUrl, name, username }: UserDto) {
   return (
     <div className="flex gap-2 bg-accent/15 py-1 transition hover:bg-accent/25">
       <Image
         draggable="false"
         alt="Image"
-        src={image}
+        src={imageUrl}
         className="size-8 self-center rounded-full"
         width={100}
         height={100}

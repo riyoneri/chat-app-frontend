@@ -37,21 +37,27 @@ const Chats = [
 const Users: UserDto[] = [
   {
     id: "1",
-    image: "/app/assets/images/avatar.png",
+    imageUrl: "/app/assets/images/avatar.png",
     name: "Lion",
     username: "riyo",
+    email: "",
+    chatUsers: [],
   },
   {
     id: "2",
-    image: "/app/assets/images/avatar.png",
+    imageUrl: "/app/assets/images/avatar.png",
     name: "Lion",
     username: "riyo",
+    email: "",
+    chatUsers: [],
   },
   {
     id: "3",
-    image: "/app/assets/images/avatar.png",
+    imageUrl: "/app/assets/images/avatar.png",
     name: "Lion",
     username: "riyo",
+    email: "",
+    chatUsers: [],
   },
 ];
 
