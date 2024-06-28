@@ -4,15 +4,15 @@ import { authActions } from "../store/slices/auth.slice";
 import { useAppDispatch } from "./store-hooks";
 
 export default function useLogout() {
-  const [, setTokenValue] = useLocalStorage("_o", "");
-  const [, setUserValue] = useLocalStorage("_e", "");
+  const removeTokenValue = useLocalStorage("_o", "_")[2];
+  const removeUserValue = useLocalStorage("_e", "_")[2];
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   return () => {
-    setTokenValue("");
-    setUserValue("");
     dispatch(authActions.signout());
-    router.push("/auth/signin");
+    removeTokenValue();
+    removeUserValue();
+    router.replace("/auth/signin");
   };
 }
