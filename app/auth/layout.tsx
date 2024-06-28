@@ -1,4 +1,5 @@
 "use client";
+import { usePrevious } from "@reactuses/core";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
@@ -9,27 +10,31 @@ export default function AuthLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const data = useLocalstorageData();
-  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
+  const data = useLocalstorageData();
+  const previousData = usePrevious(data);
+  const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);
-    if (data && isMounted) {
-      enqueueSnackbar({ message: "Already logged in", variant: "success" });
-
+    if (
+      data.isAuth &&
+      isMounted &&
+      (previousData?.token !== "_" || previousData?.user !== "_")
+    ) {
+      enqueueSnackbar("Already loggedin", { variant: "success" });
       router.replace("/");
     }
-  }, [data, isMounted, router]);
+  }, [data.isAuth, isMounted, previousData?.token, previousData?.user, router]);
 
   return (
     <div className="grid h-full">
-      {!isMounted || data ? (
+      {isMounted && !data.isAuth ? (
+        children
+      ) : (
         <div className="grid place-content-center">
           <span className="dui-loading dui-loading-spinner dui-loading-lg"></span>
         </div>
-      ) : (
-        children
       )}
     </div>
   );

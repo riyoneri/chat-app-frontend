@@ -1,8 +1,8 @@
 "use client";
 
+import { usePrevious } from "@reactuses/core";
 import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
-import { useAppSelector } from "../hooks/store-hooks";
 import useLocalstorageData from "../hooks/use-localstorage-data";
 import useLogout from "../hooks/use-logout";
 
@@ -13,28 +13,39 @@ export default function AuthLayout({
 }>) {
   const data = useLocalstorageData();
   const [isMounted, setIsMounted] = useState(false);
-  const [alertShown, setAlertShown] = useState(false);
   const logout = useLogout();
-  const authData = useAppSelector((state) => state.auth.id);
+  const previousData = usePrevious(data);
 
   useEffect(() => {
     setIsMounted(true);
-    if (!data && isMounted && !alertShown) {
+    if (
+      (!data.isAuth &&
+        isMounted &&
+        (previousData?.token === "_" || previousData?.user === "_")) ||
+      data.token === "_" ||
+      data.user === "_"
+    ) {
+      enqueueSnackbar("Login first", { variant: "error" });
       logout();
-      authData &&
-        enqueueSnackbar({ message: "Login first!", variant: "error" });
-      setAlertShown(true);
     }
-  }, [alertShown, authData, data, isMounted, logout]);
+  }, [
+    data.isAuth,
+    data.token,
+    data.user,
+    isMounted,
+    logout,
+    previousData?.token,
+    previousData?.user,
+  ]);
 
   return (
     <>
-      {!isMounted || !data ? (
+      {isMounted && data.isAuth ? (
+        children
+      ) : (
         <div className="grid place-content-center">
           <span className="dui-loading dui-loading-spinner dui-loading-lg"></span>
         </div>
-      ) : (
-        children
       )}
     </>
   );
