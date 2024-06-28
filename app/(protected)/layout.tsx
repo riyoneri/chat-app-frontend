@@ -3,6 +3,7 @@
 import { usePrevious } from "@reactuses/core";
 import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
+import { connectServer } from "../helpers/socket";
 import useLocalstorageData from "../hooks/use-localstorage-data";
 import useLogout from "../hooks/use-logout";
 
@@ -37,6 +38,15 @@ export default function AuthLayout({
     previousData?.token,
     previousData?.user,
   ]);
+
+  useEffect(() => {
+    if (data.isAuth) {
+      const socket = connectServer(data.user.id, data.token);
+      socket.on("connect_error", () =>
+        enqueueSnackbar("Socket connection error", { variant: "error" }),
+      );
+    }
+  }, [data.isAuth, data.token, data.user.id]);
 
   return (
     <>
