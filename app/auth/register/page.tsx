@@ -77,7 +77,7 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     watch,
-    getValues,
+    getValues: _getValues,
     formState: { errors },
   } = useForm({ resolver: yupResolver(registerFormSchema) });
   const [modalOpen, setModalOpen] = useState(false);
@@ -95,9 +95,9 @@ export default function RegisterPage() {
 
   const {
     data: resendData,
-    isPending: resendPending,
+    isPending: _resendPending,
     error: resendError,
-    mutate: resendMutate,
+    mutate: _resendMutate,
   } = useMutation<
     { message: string },
     ResendResponseError,
@@ -234,17 +234,19 @@ export default function RegisterPage() {
           <MailSentIllustration className="w-5/6 xs:w-1/2" />
 
           <h2 className="my-5 font-medium xs:text-lg sm:text-xl">
-            Email Confirmation
+            {/* Email Confirmation */}
+            Created account
           </h2>
 
           <div className="space-y-2 text-pretty text-center">
             <p>
-              🎉 Registration Successful! To get started, please check your
+              🎉 Registration Successful!
+              {/* To get started, please check your
               email inbox for a verification message from us. Click on the
-              verification link to confirm your email address.
+              verification link to confirm your email address. */}
             </p>
           </div>
-          <div className="dui-divider"></div>
+          {/* <div className="dui-divider"></div>
           <p className="text-center">
             Didn’t receive the email? Click{" "}
             <button
@@ -264,7 +266,7 @@ export default function RegisterPage() {
               )}
             </button>{" "}
             to resend the verification email.
-          </p>
+          </p> */}
         </div>
         <label className="dui-modal-backdrop bg-black/80" htmlFor="my_modal_7">
           Close
