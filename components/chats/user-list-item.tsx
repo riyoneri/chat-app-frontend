@@ -7,7 +7,7 @@ export default function UserListItem({ imageUrl, name, username }: UserDto) {
         draggable="false"
         alt="Image"
         src={imageUrl}
-        className="size-8 self-center rounded-full"
+        className="size-8 self-center rounded-full object-cover object-top"
         width={100}
         height={100}
       />

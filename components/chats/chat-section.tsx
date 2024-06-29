@@ -3,7 +3,10 @@
 import Image from "next/image";
 
 import avatarPlaceholder from "@/app/assets/images/avatar.png";
+import { fetcher } from "@/app/helpers/fetcher";
 import { useAppSelector } from "@/app/hooks/store-hooks";
+import useLogout from "@/app/hooks/use-logout";
+import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
 import { useState } from "react";
 import { TbMessagePlus } from "react-icons/tb";
@@ -35,36 +38,24 @@ const Chats = [
   },
 ];
 
-const Users: UserDto[] = [
-  {
-    id: "1",
-    imageUrl: "/app/assets/images/avatar.png",
-    name: "Lion",
-    username: "riyo",
-    email: "",
-    chatUsers: [],
-  },
-  {
-    id: "2",
-    imageUrl: "/app/assets/images/avatar.png",
-    name: "Lion",
-    username: "riyo",
-    email: "",
-    chatUsers: [],
-  },
-  {
-    id: "3",
-    imageUrl: "/app/assets/images/avatar.png",
-    name: "Lion",
-    username: "riyo",
-    email: "",
-    chatUsers: [],
-  },
-];
-
 export default function ChatSection({ className }: { className?: string }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [filter, setFilter] = useState<"active" | "all">("all");
+  const logout = useLogout();
+  const {
+    data: allUsers,
+    isLoading: allUsersLoading,
+    error: allUsersError,
+  } = useQuery<
+    {},
+    {
+      errorMessage: string;
+    },
+    UserDto[]
+  >({
+    queryFn: () => fetcher({ url: "/users", logout }),
+    queryKey: ["users", logout],
+  });
 
   const user = useAppSelector((state) => state.auth);
 
@@ -93,9 +84,20 @@ export default function ChatSection({ className }: { className?: string }) {
             </button>
           </div>
           <div className="grid gap-2 *:px-3">
-            {Users.map((user) => (
-              <UserListItem key={user.id} {...user} />
-            ))}
+            {(allUsersLoading || allUsersError) && (
+              <div className="flex justify-center py-1">
+                {allUsersLoading && (
+                  <span className="dui-loading dui-loading-spinner"></span>
+                )}
+                {allUsersError && (
+                  <span className="text-red-500">
+                    {allUsersError.errorMessage}
+                  </span>
+                )}
+              </div>
+            )}
+            {allUsers &&
+              allUsers.map((user) => <UserListItem key={user.id} {...user} />)}
           </div>
         </div>
         <label className="dui-modal-backdrop bg-black/80" htmlFor="my_modal_7">
@@ -114,7 +116,7 @@ export default function ChatSection({ className }: { className?: string }) {
               draggable="false"
               alt="Image"
               src={user.imageUrl!}
-              className="size-8 rounded-full"
+              className="size-8 rounded-full object-cover object-top"
               width={100}
               height={100}
             />
