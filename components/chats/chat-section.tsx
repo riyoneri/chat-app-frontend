@@ -6,7 +6,7 @@ import avatarPlaceholder from "@/app/assets/images/avatar.png";
 import { fetcher } from "@/app/helpers/fetcher";
 import { useAppSelector } from "@/app/hooks/store-hooks";
 import useLogout from "@/app/hooks/use-logout";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
 import { useState } from "react";
 import { TbMessagePlus } from "react-icons/tb";
@@ -41,6 +41,7 @@ const Chats = [
 export default function ChatSection({ className }: { className?: string }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [filter, setFilter] = useState<"active" | "all">("all");
+  const [_selectedChatId, _setSelectedChatId] = useState<undefined | string>();
   const logout = useLogout();
   const {
     data: allUsers,
@@ -55,6 +56,25 @@ export default function ChatSection({ className }: { className?: string }) {
   >({
     queryFn: () => fetcher({ url: "/users", logout }),
     queryKey: ["users", logout],
+  });
+
+  const {
+    data: _createChatData,
+    isPending: createChatLoading,
+    error: createChatError,
+    mutate: createChat,
+  } = useMutation<
+    { message: string },
+    { message: { userId: { message: string } }; errorMessage: string },
+    string
+  >({
+    mutationFn: (userId: string) =>
+      fetcher({
+        url: "/chat/create",
+        method: "POST",
+        body: JSON.stringify({ userId }),
+        logout,
+      }),
   });
 
   const user = useAppSelector((state) => state.auth);
@@ -90,14 +110,27 @@ export default function ChatSection({ className }: { className?: string }) {
                   <span className="dui-loading dui-loading-spinner"></span>
                 )}
                 {allUsersError && (
-                  <span className="text-red-500">
-                    {allUsersError.errorMessage}
-                  </span>
+                  <span className="">{allUsersError.errorMessage}</span>
                 )}
               </div>
             )}
+
+            {createChatError && (
+              <span className="text-center text-red-500">
+                {createChatError.message?.userId.message ||
+                  createChatError?.errorMessage}
+              </span>
+            )}
+
             {allUsers &&
-              allUsers.map((user) => <UserListItem key={user.id} {...user} />)}
+              allUsers.map((user) => (
+                <UserListItem
+                  key={user.id}
+                  {...user}
+                  isLoading={createChatLoading}
+                  onCreateChat={() => createChat(user.id)}
+                />
+              ))}
           </div>
         </div>
         <label className="dui-modal-backdrop bg-black/80" htmlFor="my_modal_7">
