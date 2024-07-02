@@ -1,6 +1,24 @@
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
-export default function UserListItem({ imageUrl, name, username }: UserDto) {
+interface UserListItemProperties extends UserDto {
+  isLoading: boolean;
+  onCreateChat: () => void;
+}
+
+export default function UserListItem({
+  imageUrl,
+  name,
+  username,
+  isLoading,
+  onCreateChat,
+}: UserListItemProperties) {
+  const [currentLoading, setCurrentLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading) setCurrentLoading(false);
+  }, [isLoading]);
+
   return (
     <div className="flex gap-2 bg-accent/15 py-1 transition hover:bg-accent/25">
       <Image
@@ -18,8 +36,19 @@ export default function UserListItem({ imageUrl, name, username }: UserDto) {
         </span>
       </div>
 
-      <button className="self-center rounded-sm bg-secondary px-3 py-1">
-        Start Chat
+      <button
+        onClick={() => {
+          onCreateChat();
+          setCurrentLoading(true);
+        }}
+        disabled={isLoading}
+        className="self-center rounded-sm bg-secondary px-3 py-1"
+      >
+        {currentLoading && isLoading ? (
+          <span className="dui-loading dui-loading-spinner dui-loading-sm align-middle"></span>
+        ) : (
+          "Start Chat"
+        )}
       </button>
     </div>
   );
