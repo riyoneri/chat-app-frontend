@@ -7,7 +7,7 @@ import { useAppSelector } from "@/app/hooks/store-hooks";
 import useLogout from "@/app/hooks/use-logout";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TbMessagePlus } from "react-icons/tb";
 import ChatListItem from "./chat-list-item";
 import UserListItem from "./user-list-item";
@@ -16,6 +16,7 @@ export default function ChatSection({ className }: { className?: string }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [filter, setFilter] = useState<"active" | "all">("all");
   const [_selectedChatId, _setSelectedChatId] = useState<undefined | string>();
+  const [chatList, setChatList] = useState<ChatDto[]>([]);
   const logout = useLogout();
   const {
     data: allUsers,
@@ -67,6 +68,13 @@ export default function ChatSection({ className }: { className?: string }) {
   });
 
   const user = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (chats) {
+      setChatList(chats);
+      setModalOpen(false);
+    }
+  }, [chats]);
 
   return (
     <>
@@ -182,9 +190,10 @@ export default function ChatSection({ className }: { className?: string }) {
               </div>
             )}
 
-            {chats &&
-              (chats.length > 0 ? (
-                chats.map((chat) => (
+            {chatList &&
+              chats &&
+              (chatList.length > 0 ? (
+                chatList.map((chat) => (
                   <ChatListItem
                     {...chat}
                     key={chat.id}
