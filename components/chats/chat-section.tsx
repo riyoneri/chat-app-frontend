@@ -70,7 +70,7 @@ export default function ChatSection({ className }: { className?: string }) {
   >({
     mutationFn: (userId: string) =>
       fetcher({
-        url: "/chat/create",
+        url: "/chat",
         method: "POST",
         body: JSON.stringify({ userId }),
         logout,
