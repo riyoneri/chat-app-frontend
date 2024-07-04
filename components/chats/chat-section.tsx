@@ -112,13 +112,17 @@ export default function ChatSection({ className }: { className?: string }) {
             )}
 
             {allUsers &&
-              allUsers.map((user) => (
-                <UserListItem
-                  key={user.id}
-                  {...user}
-                  isLoading={createChatLoading}
-                  onCreateChat={() => createChat(user.id)}
-                />
+              (allUsers.length > 0 ? (
+                allUsers.map((user) => (
+                  <UserListItem
+                    key={user.id}
+                    {...user}
+                    isLoading={createChatLoading}
+                    onCreateChat={() => createChat(user.id)}
+                  />
+                ))
+              ) : (
+                <p className="text-center">No available users</p>
               ))}
           </div>
         </div>
