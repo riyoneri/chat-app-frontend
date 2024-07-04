@@ -10,9 +10,21 @@ interface UserDto {
 
 interface MessageDto {
   id: string;
-  conversationId: string;
+  chatId: string;
   senderId: string;
   content: string;
   state: "pending" | "delivered" | "seen";
   createdAt: string;
+}
+
+interface ChatDto {
+  id: string;
+  lastMessage: {
+    sender: string;
+    sentTime: string;
+    text: string;
+  };
+  participant: UserDto;
+  createdAt: string;
+  updatedAt: string;
 }
