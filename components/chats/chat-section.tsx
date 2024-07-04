@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import { fetcher } from "@/app/helpers/fetcher";
+import { getSocket } from "@/app/helpers/socket";
 import { useAppSelector } from "@/app/hooks/store-hooks";
 import useLogout from "@/app/hooks/use-logout";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -69,12 +70,23 @@ export default function ChatSection({ className }: { className?: string }) {
 
   const user = useAppSelector((state) => state.auth);
 
+  const socket = getSocket();
+
   useEffect(() => {
     if (chats) {
       setChatList(chats);
       setModalOpen(false);
     }
-  }, [chats]);
+
+    socket.on("chat:create", () => {
+      allUsersRefetch();
+      chatsRefetch();
+    });
+
+    return () => {
+      socket.off("chat:create");
+    };
+  }, [allUsersRefetch, chats, chatsRefetch, socket]);
 
   return (
     <>
