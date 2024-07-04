@@ -1,31 +1,22 @@
 "use client";
 
 import classNames from "classnames";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import TimeAgo from "react-time-ago";
 
-interface ChatListItemProperties {
-  id: string;
-  href: string;
-  image: StaticImageData;
-  name: string;
-  lastMessage: {
-    text: string;
-    sender: string;
-    sendTime: Date;
-  };
+interface ChatListItemProperties extends ChatDto {
   unreadsNumber?: number;
+  href: string;
 }
 
 export default function ChatListItem({
   id,
   href,
-  image,
   lastMessage,
-  name,
-  unreadsNumber,
+  participant: { imageUrl, name },
+  updatedAt,
 }: ChatListItemProperties) {
   const [mounted, setMounted] = useState(false);
 
@@ -48,9 +39,10 @@ export default function ChatListItem({
           <Image
             draggable="false"
             alt="Image"
-            src={image}
+            src={imageUrl}
             width={100}
             height={100}
+            className="object-top"
           />
         </div>
       </div>
@@ -60,11 +52,11 @@ export default function ChatListItem({
       </div>
       <div className="flex flex-col items-center justify-between self-stretch text-xs">
         <span>
-          <TimeAgo date={lastMessage.sendTime} timeStyle="twitter-minute" />
+          <TimeAgo date={new Date(updatedAt)} timeStyle="twitter-minute" />
         </span>
-        {unreadsNumber && (
+        {10 && (
           <span className="grid size-5 place-content-center rounded-full bg-secondary">
-            {unreadsNumber > 9 ? "9+" : `${unreadsNumber}`}
+            {10 > 9 ? "9+" : `${10}`}
           </span>
         )}
       </div>

@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 
-import avatarPlaceholder from "@/app/assets/images/avatar.png";
 import { fetcher } from "@/app/helpers/fetcher";
 import { useAppSelector } from "@/app/hooks/store-hooks";
 import useLogout from "@/app/hooks/use-logout";
@@ -12,31 +11,6 @@ import { useState } from "react";
 import { TbMessagePlus } from "react-icons/tb";
 import ChatListItem from "./chat-list-item";
 import UserListItem from "./user-list-item";
-
-const Chats = [
-  {
-    id: "1",
-    href: "/chat/1",
-    image: avatarPlaceholder,
-    name: "Lionel Kaneza",
-    lastMessage: {
-      text: " Lorem ipsum dolor, sit amet",
-      sender: "1",
-      sendTime: new Date(),
-    },
-  },
-  {
-    id: "2",
-    href: "/chat/2",
-    image: avatarPlaceholder,
-    name: "John Doe",
-    lastMessage: {
-      text: "Lorem ipsum dolor, sit amet",
-      sender: "2",
-      sendTime: new Date(),
-    },
-  },
-];
 
 export default function ChatSection({ className }: { className?: string }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -56,6 +30,15 @@ export default function ChatSection({ className }: { className?: string }) {
   >({
     queryFn: () => fetcher({ url: "/users", logout }),
     queryKey: ["users", logout],
+  });
+
+  const {
+    data: chats,
+    isLoading: chatsLoading,
+    error: chatsError,
+  } = useQuery<{}, { errorMessage?: string; message?: string }, ChatDto[]>({
+    queryFn: () => fetcher({ url: "/chat", logout }),
+    queryKey: ["chats", logout],
   });
 
   const {
@@ -183,9 +166,30 @@ export default function ChatSection({ className }: { className?: string }) {
           </div>
 
           <div className="mt-4 space-y-2">
-            {Chats.map((chat) => (
-              <ChatListItem {...chat} key={chat.id} />
-            ))}
+            {chatsLoading && (
+              <div className="flex justify-center">
+                <span className="dui-loading dui-loading-spinner"></span>
+              </div>
+            )}
+
+            {chats &&
+              (chats.length > 0 ? (
+                chats.map((chat) => (
+                  <ChatListItem
+                    {...chat}
+                    key={chat.id}
+                    href={`/chat/${chat.id}`}
+                  />
+                ))
+              ) : (
+                <p className="text-center">No chats available</p>
+              ))}
+
+            {chatsError && (
+              <p className="text-center text-red-500">
+                Error: {chatsError.errorMessage || chatsError.message}
+              </p>
+            )}
           </div>
         </div>
       </div>

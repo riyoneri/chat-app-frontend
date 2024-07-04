@@ -27,7 +27,7 @@ const Messages: MessageDto[] = [
   {
     id: "1",
     content: "You underestimate my power!",
-    conversationId: "1",
+    chatId: "1",
     createdAt: "1",
     senderId: "1",
     state: "seen",
@@ -35,7 +35,7 @@ const Messages: MessageDto[] = [
   {
     id: "2",
     content: "I know",
-    conversationId: "1",
+    chatId: "1",
     createdAt: "1",
     senderId: "2",
     state: "delivered",
@@ -62,7 +62,7 @@ const Messages: MessageDto[] = [
       Veritatis tempore distinctio assumenda magni dolore tenetur atque iste doloremque ex adipisci commodi rerum neque sunt, voluptatibus tempora fugit reprehenderit. Optio alias soluta repellat at distinctio, inventore reiciendis repudiandae aperiam!
       Cupiditate maxime nisi debitis corrupti exercitationem voluptates, laborum modi quaerat doloribus placeat fuga minima. Eum placeat, vitae quis dignissimos labore nisi aspernatur explicabo voluptate assumenda? Pariatur labore reiciendis nostrum. Beatae?
       Rem, cupiditate sint! Quaerat in veniam debitis tenetur optio officiis ut rem. Dicta iusto atque distinctio ipsam quis laudantium nobis saepe cum! Fugiat similique velit a quaerat quibusdam, quos at.`,
-    conversationId: "1",
+    chatId: "1",
     createdAt: "1",
     senderId: "1",
     state: "pending",
