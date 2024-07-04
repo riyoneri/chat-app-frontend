@@ -21,6 +21,7 @@ export default function ChatSection({ className }: { className?: string }) {
     data: allUsers,
     isLoading: allUsersLoading,
     error: allUsersError,
+    refetch: allUsersRefetch,
   } = useQuery<
     {},
     {
@@ -36,6 +37,7 @@ export default function ChatSection({ className }: { className?: string }) {
     data: chats,
     isLoading: chatsLoading,
     error: chatsError,
+    refetch: chatsRefetch,
   } = useQuery<{}, { errorMessage?: string; message?: string }, ChatDto[]>({
     queryFn: () => fetcher({ url: "/chat", logout }),
     queryKey: ["chats", logout],
@@ -58,6 +60,10 @@ export default function ChatSection({ className }: { className?: string }) {
         body: JSON.stringify({ userId }),
         logout,
       }),
+    onSuccess() {
+      chatsRefetch();
+      allUsersRefetch();
+    },
   });
 
   const user = useAppSelector((state) => state.auth);
