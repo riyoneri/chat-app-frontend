@@ -8,6 +8,7 @@ import { useAppSelector } from "@/app/hooks/store-hooks";
 import useLogout from "@/app/hooks/use-logout";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { TbMessagePlus } from "react-icons/tb";
 import ChatListItem from "./chat-list-item";
@@ -205,13 +206,19 @@ export default function ChatSection({ className }: { className?: string }) {
             {chatList &&
               chats &&
               (chatList.length > 0 ? (
-                chatList.map((chat) => (
-                  <ChatListItem
-                    {...chat}
-                    key={chat.id}
-                    href={`/chat/${chat.id}`}
-                  />
-                ))
+                chatList
+                  .sort(
+                    (chatA, chatB) =>
+                      dayjs(chatB.updatedAt).valueOf() -
+                      dayjs(chatA.updatedAt).valueOf(),
+                  )
+                  .map((chat) => (
+                    <ChatListItem
+                      {...chat}
+                      key={chat.id}
+                      href={`/chat/${chat.id}`}
+                    />
+                  ))
               ) : (
                 <p className="text-center">No chats available</p>
               ))}
