@@ -1,8 +1,10 @@
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
-let socket;
+let socket: Socket;
 
-export default socket;
+export function getSocket() {
+  return socket;
+}
 
 export function connectServer(userId: string, token: string) {
   socket = io(process.env.NEXT_PUBLIC_API_URL!, { auth: { token, userId } });
