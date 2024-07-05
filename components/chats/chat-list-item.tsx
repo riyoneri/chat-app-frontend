@@ -12,6 +12,7 @@ dayjs.extend(relativeTime);
 interface ChatListItemProperties extends ChatDto {
   unreadsNumber?: number;
   href: string;
+  isActive: boolean;
 }
 
 export default function ChatListItem({
@@ -20,6 +21,7 @@ export default function ChatListItem({
   lastMessage,
   participant: { imageUrl, name },
   updatedAt,
+  isActive,
 }: ChatListItemProperties) {
   const [mounted, setMounted] = useState(false);
   let displayDateText = "";
@@ -47,7 +49,12 @@ export default function ChatListItem({
         "bg-accent/20": id !== "1",
       })}
     >
-      <div className="dui-avatar dui-online shrink-0">
+      <div
+        className={classNames("dui-avatar shrink-0", {
+          "dui-online": isActive,
+          "dui-offline": !isActive,
+        })}
+      >
         <div className="size-9 rounded-full">
           <Image
             draggable="false"
