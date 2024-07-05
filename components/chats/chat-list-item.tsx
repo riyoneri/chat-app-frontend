@@ -1,10 +1,13 @@
 "use client";
 
 import classNames from "classnames";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import TimeAgo from "react-time-ago";
+
+dayjs.extend(relativeTime);
 
 interface ChatListItemProperties extends ChatDto {
   unreadsNumber?: number;
@@ -19,6 +22,16 @@ export default function ChatListItem({
   updatedAt,
 }: ChatListItemProperties) {
   const [mounted, setMounted] = useState(false);
+  let displayDateText = "";
+  const messageDate = dayjs(updatedAt);
+
+  if (dayjs().isSame(messageDate, "day")) {
+    displayDateText = dayjs(messageDate).format("H:m");
+  } else if (
+    dayjs().startOf("day").diff(messageDate.startOf("day"), "day") === 1
+  ) {
+    displayDateText = "Yesterday";
+  } else displayDateText = dayjs(messageDate).format("D/M/YY");
 
   useEffect(() => {
     setMounted(true);
@@ -51,9 +64,7 @@ export default function ChatListItem({
         <span className="line-clamp-1 text-xs">{lastMessage.text}</span>
       </div>
       <div className="flex flex-col items-center justify-between self-stretch text-xs">
-        <span>
-          <TimeAgo date={new Date(updatedAt)} timeStyle="twitter-minute" />
-        </span>
+        <span>{displayDateText}</span>
         {10 && (
           <span className="grid size-5 place-content-center rounded-full bg-secondary">
             {10 > 9 ? "9+" : `${10}`}
