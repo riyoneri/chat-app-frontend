@@ -28,3 +28,8 @@ interface ChatDto {
   createdAt: string;
   updatedAt: string;
 }
+
+interface SocketUser {
+  userId: string;
+  socketId: string;
+}
