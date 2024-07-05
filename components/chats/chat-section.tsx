@@ -17,6 +17,7 @@ import UserListItem from "./user-list-item";
 export default function ChatSection({ className }: { className?: string }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [filter, setFilter] = useState<"active" | "all">("all");
+  const [activeChats, setActiveChats] = useState<SocketUser[]>([]);
   const [_selectedChatId, _setSelectedChatId] = useState<undefined | string>();
   const [chatList, setChatList] = useState<ChatDto[]>([]);
   const logout = useLogout();
@@ -79,13 +80,25 @@ export default function ChatSection({ className }: { className?: string }) {
       setModalOpen(false);
     }
 
-    socket.on("chat:create", () => {
-      allUsersRefetch();
-      chatsRefetch();
-    });
+    socket
+      .on("chat:create", () => {
+        allUsersRefetch();
+        chatsRefetch();
+      })
+      .on("chat:active", (clients: SocketUser[]) => setActiveChats(clients))
+      .on("chat:inactive", (client: SocketUser) => {
+        {
+          setActiveChats((previousActiveChats) =>
+            previousActiveChats.filter(
+              (previousActiveChat) =>
+                previousActiveChat.userId !== client.userId,
+            ),
+          );
+        }
+      });
 
     return () => {
-      socket.off("chat:create");
+      socket.off("chat:create").off("chat:active");
     };
   }, [allUsersRefetch, chats, chatsRefetch, socket]);
 
@@ -214,6 +227,10 @@ export default function ChatSection({ className }: { className?: string }) {
                   )
                   .map((chat) => (
                     <ChatListItem
+                      isActive={activeChats.some(
+                        (activeChat) =>
+                          activeChat.userId === chat.participant.id,
+                      )}
                       {...chat}
                       key={chat.id}
                       href={`/chat/${chat.id}`}
