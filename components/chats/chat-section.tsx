@@ -81,24 +81,23 @@ export default function ChatSection({ className }: { className?: string }) {
     }
 
     socket
-      .on("chat:create", () => {
+      .on("chat:create", (callback: () => void) => {
+        chatsRefetch().finally(() => {
+          callback();
+        });
         allUsersRefetch();
-        chatsRefetch();
       })
       .on("chat:active", (clients: SocketUser[]) => setActiveChats(clients))
-      .on("chat:inactive", (client: SocketUser) => {
-        {
-          setActiveChats((previousActiveChats) =>
-            previousActiveChats.filter(
-              (previousActiveChat) =>
-                previousActiveChat.userId !== client.userId,
-            ),
-          );
-        }
-      });
+      .on("chat:inactive", (client: SocketUser) =>
+        setActiveChats((previousActiveChats) =>
+          previousActiveChats.filter(
+            (previousActiveChat) => previousActiveChat.userId !== client.userId,
+          ),
+        ),
+      );
 
     return () => {
-      socket.off("chat:create").off("chat:active");
+      socket.off("chat:create").off("chat:active").off("chat:inactive");
     };
   }, [allUsersRefetch, chats, chatsRefetch, socket]);
 

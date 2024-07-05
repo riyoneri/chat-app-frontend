@@ -28,7 +28,7 @@ export default function ChatListItem({
   const messageDate = dayjs(updatedAt);
 
   if (dayjs().isSame(messageDate, "day")) {
-    displayDateText = dayjs(messageDate).format("H:m");
+    displayDateText = dayjs(messageDate).format("H:mm");
   } else if (
     dayjs().startOf("day").diff(messageDate.startOf("day"), "day") === 1
   ) {
