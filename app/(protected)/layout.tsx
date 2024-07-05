@@ -41,10 +41,7 @@ export default function AuthLayout({
 
   useEffect(() => {
     if (data.isAuth) {
-      const socket = connectServer(data.user.id, data.token);
-      socket.on("connect_error", () =>
-        enqueueSnackbar("Socket connection error", { variant: "error" }),
-      );
+      connectServer(data.user.id, data.token);
     }
   }, [data.isAuth, data.token, data.user.id]);
 
