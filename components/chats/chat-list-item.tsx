@@ -19,7 +19,7 @@ export default function ChatListItem({
   id,
   href,
   lastMessage,
-  participant: { imageUrl, name },
+  participant: { imageUrl, name, id: participantId },
   updatedAt,
   isActive,
 }: ChatListItemProperties) {
@@ -68,7 +68,7 @@ export default function ChatListItem({
       </div>
       <div className="flex flex-1 flex-col gap-1">
         <span className="line-clamp-1 font-medium">{name}</span>
-        <span className="line-clamp-1 text-xs">{lastMessage.text}</span>
+        <span className="line-clamp-1 text-xs">{`${lastMessage.sender === participantId ? "" : "You: "}${lastMessage.text}`}</span>
       </div>
       <div className="flex flex-col items-center justify-between self-stretch text-xs">
         <span>{displayDateText}</span>
