@@ -17,6 +17,6 @@ export default function useLogout() {
     removeTokenValue();
     removeUserValue();
     router.replace("/auth/signin");
-    socket.emit("user:logout", userId);
+    socket && socket.emit("user:logout", userId);
   };
 }
