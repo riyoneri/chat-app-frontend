@@ -101,6 +101,18 @@ export default function ChatSection({ className }: { className?: string }) {
     };
   }, [allUsersRefetch, chats, chatsRefetch, socket]);
 
+  useEffect(() => {
+    if (filter === "active") {
+      setChatList((previousChat) =>
+        previousChat.filter((chat) =>
+          activeChats.some(
+            (activeChat) => activeChat.userId === chat.participant.id,
+          ),
+        ),
+      );
+    } else chats && setChatList(chats);
+  }, [activeChats, chats, filter]);
+
   return (
     <>
       <input
@@ -215,8 +227,7 @@ export default function ChatSection({ className }: { className?: string }) {
               </div>
             )}
 
-            {chatList &&
-              chats &&
+            {chats &&
               (chatList.length > 0 ? (
                 chatList
                   .sort(
@@ -236,7 +247,9 @@ export default function ChatSection({ className }: { className?: string }) {
                     />
                   ))
               ) : (
-                <p className="text-center">No chats available</p>
+                <p className="text-center">
+                  No {`${filter === "active" ? "active" : ""}`} chats available
+                </p>
               ))}
 
             {chatsError && (
