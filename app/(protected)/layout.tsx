@@ -4,8 +4,10 @@ import { usePrevious } from "@reactuses/core";
 import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { connectServer } from "../helpers/socket";
+import { useAppDispatch } from "../hooks/store-hooks";
 import useLocalstorageData from "../hooks/use-localstorage-data";
 import useLogout from "../hooks/use-logout";
+import { authActions } from "../store/slices/auth.slice";
 
 export default function AuthLayout({
   children,
@@ -16,6 +18,7 @@ export default function AuthLayout({
   const [isMounted, setIsMounted] = useState(false);
   const logout = useLogout();
   const previousData = usePrevious(data);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setIsMounted(true);
@@ -41,9 +44,10 @@ export default function AuthLayout({
 
   useEffect(() => {
     if (data.isAuth) {
+      dispatch(authActions.signin(data.user));
       connectServer(data.user.id, data.token);
     }
-  }, [data.isAuth, data.token, data.user.id]);
+  }, [data.isAuth, data.token, data.user, data.user.id, dispatch]);
 
   return (
     <>
