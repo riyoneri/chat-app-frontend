@@ -17,6 +17,26 @@ interface MessageDto {
   createdAt: string;
 }
 
+enum FileType {
+  IMAGE = "image",
+  VIDEO = "video",
+  FILE = "file",
+}
+
+enum MessageState {
+  PENDING = "pending",
+  DELIVERED = "delivered",
+  SEEN = "seen",
+}
+
+interface IMessage {
+  conversationId: string;
+  senderId: string;
+  text?: string;
+  state: MessageState;
+  files?: { name: string; type: FileType }[];
+}
+
 interface ChatDto {
   id: string;
   lastMessage: {
