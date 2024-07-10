@@ -1,4 +1,4 @@
-import CategoryListItem from "@/components/category-list-item";
+import CategoryListItem from "@/components/messages/category-list-item";
 import { IconType } from "react-icons";
 import { IoCall } from "react-icons/io5";
 import { MdVideoCall } from "react-icons/md";
