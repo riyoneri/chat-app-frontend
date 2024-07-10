@@ -43,7 +43,7 @@ export default function ChatSection({ className }: { className?: string }) {
     error: chatsError,
     refetch: chatsRefetch,
   } = useQuery<{}, { errorMessage?: string; message?: string }, ChatDto[]>({
-    queryFn: () => fetcher({ url: "/chat", logout }),
+    queryFn: () => fetcher({ url: "/chats", logout }),
     queryKey: ["chats", logout],
   });
 
@@ -59,7 +59,7 @@ export default function ChatSection({ className }: { className?: string }) {
   >({
     mutationFn: (userId: string) =>
       fetcher({
-        url: "/chat",
+        url: "/chats",
         method: "POST",
         body: JSON.stringify({ userId }),
         logout,
