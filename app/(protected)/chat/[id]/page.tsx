@@ -13,17 +13,35 @@ import Image from "next/image";
 import { BsThreeDots } from "react-icons/bs";
 import { FaChevronLeft, FaFolder, FaVideo, FaXmark } from "react-icons/fa6";
 
+import { getSocket } from "@/app/helpers/socket";
 import { useChatId } from "@/app/hooks/use-chat-id";
 import SoloVideoCall from "@/components/call/solo-video";
 import MessageList from "@/components/messages/message-list";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useTitle } from "@reactuses/core";
+import classNames from "classnames";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { FiSend } from "react-icons/fi";
 import { GrMicrophone } from "react-icons/gr";
 import { ImAttachment } from "react-icons/im";
 import { IoDocument } from "react-icons/io5";
 import { MdAddCall, MdAddPhotoAlternate, MdVideoLibrary } from "react-icons/md";
+import { object, string } from "yup";
+
+interface MessageFormData {
+  text: string;
+}
+
+const messageFormSchema = object({
+  text: string().required("Text is required"),
+});
+
+const submitHandler = (data: MessageFormData) => {
+  data;
+};
 
 export default function ChatDetails() {
   const [callData, setCallData] = useState<{
@@ -35,13 +53,30 @@ export default function ChatDetails() {
   });
 
   const { id } = useParams<{ id: string }>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm({
+    resolver: yupResolver(messageFormSchema),
+  });
 
   const { chatData, chatError, chatIsLoading } = useChatId(id);
+  useTitle(`Chat: ${chatData?.chat.participant.name ?? ""}`);
+
+  const messageValue = watch("text");
+
+  useEffect(() => {
+    if (messageValue)
+      getSocket().emit("chat:typing", chatData?.chat.participant.id);
+  }, [chatData?.chat.participant.id, messageValue]);
 
   const endCallHandler = () => setCallData({ isOpen: false, type: "audio" });
+
   return (
     <>
-      <title>Chat: {`${chatData?.chat.participant.name}`}</title>
+      <title>Chat</title>
       <div className="flex">
         <ChatSection className="hidden w-72 sm:block" />
         {(chatError || chatIsLoading) && (
@@ -108,13 +143,21 @@ export default function ChatDetails() {
                 )}
                 <MessageList messages={chatData.messages} />
               </div>
-              <div className="flex flex-col gap-2 bg-tertiary/50 py-1 xs:flex-row sm:flex-col md:flex-row md:items-center">
+              <form
+                onSubmit={handleSubmit(submitHandler)}
+                className="flex flex-col gap-2 bg-tertiary/50 py-1 xs:flex-row sm:flex-col md:flex-row md:items-center"
+              >
                 <textarea
+                  {...register("text")}
                   placeholder="Write message here..."
                   rows={2}
-                  className="flex-1 resize-none rounded-sm bg-neutral-900 p-0.5 focus:outline-none"
-                  name=""
-                  id=""
+                  className={classNames(
+                    "flex-1 border resize-none rounded-sm bg-neutral-900 p-0.5 focus:outline-none",
+                    {
+                      "border-red-600": errors.text,
+                      "border-neutral-900": !errors.text,
+                    },
+                  )}
                 ></textarea>
                 <div className="flex items-center gap-2 text-lg *:flex-1 *:cursor-pointer">
                   <Menu>
@@ -150,11 +193,11 @@ export default function ChatDetails() {
                     </Transition>
                   </Menu>
                   <GrMicrophone />
-                  <span className="grid place-content-center rounded-md bg-secondary p-1 text-2xl">
+                  <button className="grid place-content-center rounded-md bg-secondary p-1 text-2xl">
                     <FiSend className="" />
-                  </span>
+                  </button>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         )}
