@@ -161,7 +161,7 @@ export default function ChatDetails() {
                 ></textarea>
                 <div className="flex items-center gap-2 text-lg *:flex-1 *:cursor-pointer">
                   <Menu>
-                    <MenuButton>
+                    <MenuButton className="flex justify-center">
                       <ImAttachment />
                     </MenuButton>
                     <Transition
