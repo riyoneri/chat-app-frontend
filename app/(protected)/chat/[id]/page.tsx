@@ -14,6 +14,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { FaChevronLeft, FaFolder, FaVideo, FaXmark } from "react-icons/fa6";
 
 import { getSocket } from "@/app/helpers/socket";
+import { useAppSelector } from "@/app/hooks/store-hooks";
 import { useChatId } from "@/app/hooks/use-chat-id";
 import SoloVideoCall from "@/components/call/solo-video";
 import MessageList from "@/components/messages/message-list";
@@ -52,6 +53,10 @@ export default function ChatDetails() {
     type: "audio",
   });
 
+  const socket = getSocket();
+
+  const currentUserId = useAppSelector((state) => state.auth.id);
+
   const { id } = useParams<{ id: string }>();
   const {
     register,
@@ -69,8 +74,11 @@ export default function ChatDetails() {
 
   useEffect(() => {
     if (messageValue)
-      getSocket().emit("chat:typing", chatData?.chat.participant.id);
-  }, [chatData?.chat.participant.id, messageValue]);
+      socket.emit("chat:typing", {
+        receiver: chatData?.chat.participant.id,
+        sender: currentUserId,
+      });
+  }, [chatData?.chat.participant.id, currentUserId, messageValue, socket]);
 
   const endCallHandler = () => setCallData({ isOpen: false, type: "audio" });
 
