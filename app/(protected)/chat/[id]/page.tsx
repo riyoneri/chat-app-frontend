@@ -117,7 +117,7 @@ export default function ChatDetails() {
                 <textarea
                   placeholder="Write message here..."
                   rows={2}
-                  className="flex-1 resize-none rounded-sm bg-neutral-900 p-0.5 focus:outline-none"
+                  className="flex-1 resize-none rounded-sm border border-neutral-900 bg-neutral-900 p-0.5 focus:outline-none"
                   name=""
                   id=""
                 ></textarea>

@@ -47,6 +47,7 @@ interface ChatDto {
   participant: UserDto;
   createdAt: string;
   updatedAt: string;
+  unread: number;
 }
 
 interface SocketUser {

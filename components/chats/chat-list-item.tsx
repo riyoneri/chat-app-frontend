@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 dayjs.extend(relativeTime);
 
 interface ChatListItemProperties extends ChatDto {
-  unreadsNumber?: number;
   href: string;
   isActive: boolean;
 }
@@ -22,6 +21,7 @@ export default function ChatListItem({
   participant: { imageUrl, name, id: participantId },
   updatedAt,
   isActive,
+  unread,
 }: ChatListItemProperties) {
   const [mounted, setMounted] = useState(false);
   let displayDateText = "";
@@ -72,9 +72,9 @@ export default function ChatListItem({
       </div>
       <div className="flex flex-col items-center justify-between self-stretch text-xs">
         <span>{displayDateText}</span>
-        {10 && (
+        {unread > 0 && (
           <span className="grid size-5 place-content-center rounded-full bg-secondary">
-            {10 > 9 ? "9+" : `${10}`}
+            {unread > 9 ? "9+" : `${unread}`}
           </span>
         )}
       </div>

@@ -59,7 +59,7 @@ export default function RootLayout({
             </SnackbarProvider>
           </Provider>
 
-          <ReactQueryDevtools initialIsOpen={false} position="top" />
+          <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-left" />
         </QueryClientProvider>
       </body>
     </html>
