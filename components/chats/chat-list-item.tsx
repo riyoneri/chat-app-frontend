@@ -1,11 +1,14 @@
 "use client";
 
+import { getSocket } from "@/app/helpers/socket";
 import classNames from "classnames";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useCountdown } from "usehooks-ts";
 
 dayjs.extend(relativeTime);
 
@@ -26,6 +29,16 @@ export default function ChatListItem({
   const [mounted, setMounted] = useState(false);
   let displayDateText = "";
   const messageDate = dayjs(updatedAt);
+  const socket = getSocket();
+  const [typingId, setTypingId] = useState("");
+  const [count, { startCountdown, resetCountdown }] = useCountdown({
+    countStart: 3,
+    countStop: 0,
+    intervalMs: 1000,
+  });
+  const [initialTyping, setInitialTyping] = useState(true);
+
+  const { id: chatId } = useParams<{ id: string }>();
 
   if (dayjs().isSame(messageDate, "day")) {
     displayDateText = dayjs(messageDate).format("H:mm");
@@ -37,7 +50,18 @@ export default function ChatListItem({
 
   useEffect(() => {
     setMounted(true);
-  }, [mounted]);
+
+    socket.on("chat:typing", (userId: string) => {
+      setTypingId(userId);
+      setInitialTyping(false);
+      resetCountdown();
+      startCountdown();
+    });
+
+    return () => {
+      socket.off("chat:typing");
+    };
+  }, [mounted, resetCountdown, socket, startCountdown]);
 
   if (!mounted) return;
 
@@ -45,8 +69,8 @@ export default function ChatListItem({
     <Link
       href={href}
       className={classNames("flex items-center gap-2 py-1 pl-2 pr-3", {
-        "bg-accent/60": id === "1",
-        "bg-accent/20": id !== "1",
+        "bg-accent/60": id === chatId,
+        "bg-accent/20": id !== chatId,
       })}
     >
       <div
@@ -68,7 +92,14 @@ export default function ChatListItem({
       </div>
       <div className="flex flex-1 flex-col gap-1">
         <span className="line-clamp-1 font-medium">{name}</span>
-        <span className="line-clamp-1 text-xs">{`${lastMessage.sender === participantId ? "" : "You: "}${lastMessage.text}`}</span>
+        {count > 0 && !initialTyping && typingId === participantId ? (
+          <div className="line-clamp-1 flex items-end gap-1 text-xs italic">
+            <span>Typing</span>
+            <span className="dui-loading dui-loading-dots dui-loading-xs"></span>
+          </div>
+        ) : (
+          <span className="line-clamp-1 text-xs">{`${lastMessage.sender === participantId ? "" : "You: "}${lastMessage.text}`}</span>
+        )}
       </div>
       <div className="flex flex-col items-center justify-between self-stretch text-xs">
         <span>{displayDateText}</span>
