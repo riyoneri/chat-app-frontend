@@ -52,11 +52,8 @@ export default function ChatDetails() {
     isOpen: false,
     type: "audio",
   });
-
   const socket = getSocket();
-
   const currentUserId = useAppSelector((state) => state.auth.id);
-
   const { id } = useParams<{ id: string }>();
   const {
     register,
@@ -66,7 +63,6 @@ export default function ChatDetails() {
   } = useForm({
     resolver: yupResolver(messageFormSchema),
   });
-
   const { chatData, chatError, chatIsLoading } = useChatId(id);
   useTitle(`Chat: ${chatData?.chat.participant.name ?? ""}`);
 
