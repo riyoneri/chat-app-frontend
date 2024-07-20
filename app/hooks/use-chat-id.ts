@@ -2,8 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "../helpers/fetcher";
 import useLogout from "./use-logout";
 
-interface ResponseError {
-  errorMessage?: string;
+interface ResponseError extends GlobalResponseError {
   message: {
     chatId: { message: string };
   };

@@ -22,7 +22,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useTitle } from "@reactuses/core";
 import classNames from "classnames";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiSend } from "react-icons/fi";
@@ -75,6 +75,10 @@ export default function ChatDetails() {
         sender: currentUserId,
       });
   }, [chatData?.chat.participant.id, currentUserId, messageValue, socket]);
+
+  chatError?.status === 404 && notFound();
+
+  useTitle(`Chat: ${chatData?.chat.participant.name ?? ""}`);
 
   const endCallHandler = () => setCallData({ isOpen: false, type: "audio" });
 

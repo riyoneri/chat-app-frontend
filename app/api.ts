@@ -53,3 +53,8 @@ interface SocketUser {
   userId: string;
   socketId: string;
 }
+
+interface GlobalResponseError {
+  errorMessage?: string;
+  status: number;
+}
