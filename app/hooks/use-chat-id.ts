@@ -7,6 +7,7 @@ interface ResponseError {
   message: {
     chatId: { message: string };
   };
+  status: number;
 }
 
 export const useChatId = (id: string) => {
