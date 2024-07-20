@@ -23,7 +23,7 @@ Welcome to my Next.js chat app! This project aims to create a real-time chat exp
 
 3. Install Dependencies
 
-   `npm install`
+```npm install```
 
 4. Set Up Environment Variables: Create a .env.local file in the root directory and add your environment variables:
    > [Compatible backend](https://github.com/riyoneri/chat-app-backend.git)
