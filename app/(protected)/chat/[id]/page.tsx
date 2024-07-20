@@ -16,8 +16,9 @@ import { FaChevronLeft, FaFolder, FaVideo, FaXmark } from "react-icons/fa6";
 import { useChatId } from "@/app/hooks/use-chat-id";
 import SoloVideoCall from "@/components/call/solo-video";
 import MessageList from "@/components/messages/message-list";
+import { useTitle } from "@reactuses/core";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { useState } from "react";
 import { FiSend } from "react-icons/fi";
 import { GrMicrophone } from "react-icons/gr";
@@ -37,6 +38,10 @@ export default function ChatDetails() {
   const { id } = useParams<{ id: string }>();
 
   const { chatData, chatError, chatIsLoading } = useChatId(id);
+
+  chatError?.status === 404 && notFound();
+
+  useTitle(`Chat: ${chatData?.chat.participant.name ?? ""}`);
 
   const endCallHandler = () => setCallData({ isOpen: false, type: "audio" });
   return (
