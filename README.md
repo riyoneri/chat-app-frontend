@@ -14,16 +14,19 @@ Welcome to my Next.js chat app! This project aims to create a real-time chat exp
 ## Getting Started
 
 1. Clone the repository
-   ```git clone https://github.com/riyoneri/chat-app-frontend.git```
+
+   `git clone https://github.com/riyoneri/chat-app-frontend.git`
 
 2. Change working folder
-   ```cd chat-app-frontend.git```
+
+   `cd chat-app-frontend.git`
 
 3. Install Dependencies
-   ```npm install```
+
+   `npm install`
 
 4. Set Up Environment Variables: Create a .env.local file in the root directory and add your environment variables:
-> [Compatible backend](https://github.com/riyoneri/chat-app-backend.git)
+   > [Compatible backend](https://github.com/riyoneri/chat-app-backend.git)
 
 ```
 NEXT_PUBLIC_API_URL=your-api-key
@@ -31,7 +34,8 @@ NEXT_PUBLIC_LOCAL_URL=your-local-url # http://localhost:3000 (default)
 ```
 
 5. Run the Development Server
-   ```npm run dev```
+
+   `npm run dev`
 
 6. Open Your Browser: Visit http://localhost:3000 and start chatting!
 
