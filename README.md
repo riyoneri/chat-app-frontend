@@ -35,7 +35,7 @@ Welcome to my Next.js chat app! This project aims to create a real-time chat exp
    > [Compatible backend](https://github.com/riyoneri/chat-app-backend.git)
 
     ```
-    NEXT_PUBLIC_API_URL=your-api-key
+    NEXT_PUBLIC_API_URL=your-api-url
     NEXT_PUBLIC_LOCAL_URL=your-local-url # http://localhost:3000 (default)
     ```
 
