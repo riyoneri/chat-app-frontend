@@ -15,19 +15,19 @@ Welcome to my Next.js chat app! This project aims to create a real-time chat exp
 
 1. Clone the repository
 
-   ```
+   ```bash
    git clone https://github.com/riyoneri/chat-app-frontend.git
    ```
 
 2. Change working folder
 
-   ```
+   ```bash
    cd chat-app-frontend.git
    ```
 
 3. Install Dependencies
 
-   ```
+   ```bash
    npm install
    ```
 
@@ -41,7 +41,7 @@ Welcome to my Next.js chat app! This project aims to create a real-time chat exp
 
 5. Run the Development Server
 
-   ```
+   ```bash
    npm run dev
    ```
 
