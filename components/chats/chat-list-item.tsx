@@ -93,10 +93,7 @@ export default function ChatListItem({
       <div className="flex flex-1 flex-col gap-1">
         <span className="line-clamp-1 font-medium">{name}</span>
         {count > 0 && !initialTyping && typingId === participantId ? (
-          <div className="line-clamp-1 flex items-end gap-1 text-xs italic">
-            <span>Typing</span>
-            <span className="dui-loading dui-loading-dots dui-loading-xs"></span>
-          </div>
+          <span className="dui-loading dui-loading-dots dui-loading-xs"></span>
         ) : (
           <span className="line-clamp-1 text-xs">{`${lastMessage.sender === participantId ? "" : "You: "}${lastMessage.text}`}</span>
         )}

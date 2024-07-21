@@ -229,7 +229,7 @@ export default function ChatDetails() {
                 draggable="false"
                 alt="Image"
                 src={avatarPlaceholder}
-                className="size-20 rounded-full "
+                className="size-20 rounded-full"
                 width={200}
                 height={200}
               />
