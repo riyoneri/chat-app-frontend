@@ -14,6 +14,7 @@ export const useChatId = (id: string) => {
     data: chatData,
     error: chatError,
     isLoading: chatIsLoading,
+    refetch: refetchChatData,
   } = useQuery<
     object,
     ResponseError,
@@ -23,5 +24,5 @@ export const useChatId = (id: string) => {
     queryKey: ["chat", id, logout],
   });
 
-  return { chatData, chatError, chatIsLoading };
+  return { chatData, chatError, chatIsLoading, refetchChatData };
 };
