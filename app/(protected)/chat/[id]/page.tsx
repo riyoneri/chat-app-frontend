@@ -13,6 +13,7 @@ import Image from "next/image";
 import { BsThreeDots } from "react-icons/bs";
 import { FaChevronLeft, FaFolder, FaVideo, FaXmark } from "react-icons/fa6";
 
+import { fetcher } from "@/app/helpers/fetcher";
 import { getSocket } from "@/app/helpers/socket";
 import { useAppSelector } from "@/app/hooks/store-hooks";
 import { useChatId } from "@/app/hooks/use-chat-id";
@@ -20,31 +21,83 @@ import SoloVideoCall from "@/components/call/solo-video";
 import MessageList from "@/components/messages/message-list";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useTitle } from "@reactuses/core";
+import { useMutation } from "@tanstack/react-query";
 import classNames from "classnames";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
+import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiSend } from "react-icons/fi";
 import { GrMicrophone } from "react-icons/gr";
 import { ImAttachment } from "react-icons/im";
-import { IoDocument } from "react-icons/io5";
 import { MdAddCall, MdAddPhotoAlternate, MdVideoLibrary } from "react-icons/md";
-import { object, string } from "yup";
+import { mixed, object, string } from "yup";
 
 interface MessageFormData {
   text: string;
+  image?: FileList;
+  video?: FileList;
+  voice_note?: FileList;
 }
 
 const messageFormSchema = object({
   text: string().required("Text is required"),
+  image: mixed((input): input is FileList => input instanceof FileList)
+    .test(
+      "fileType",
+      "Only images are allowed",
+      (fileList) =>
+        fileList &&
+        ![...fileList].some(
+          (file) => !file.type.toLocaleLowerCase().includes("image"),
+        ),
+    )
+    .test(
+      "fileSize",
+      "Image size must be less or equal to 5MB",
+      (fileList) =>
+        fileList && ![...fileList].some((file) => file.size > 5_000_000),
+    ),
+  video: mixed((input): input is FileList => input instanceof FileList)
+    .test(
+      "fileType",
+      "Only videos are allowed",
+      (fileList) =>
+        fileList &&
+        ![...fileList].some(
+          (file) => !file.type.toLocaleLowerCase().includes("video"),
+        ),
+    )
+    .test(
+      "fileSize",
+      "Video size must be less or equal to 10MB",
+      (fileList) =>
+        fileList && ![...fileList].some((file) => file.size > 10_000_000),
+    ),
+  voice_note: mixed(
+    (input): input is FileList => input instanceof FileList,
+  ).test(
+    "fileType",
+    "Only audios are allowed",
+    (fileList) =>
+      fileList &&
+      ![...fileList].some(
+        (file) => !file.type.toLocaleLowerCase().includes("mp3"),
+      ),
+  ),
 });
 
-const submitHandler = (data: MessageFormData) => {
-  data;
-};
-
 export default function ChatDetails() {
+  const {
+    mutate,
+    data: createMessageData,
+    error,
+    isPending,
+  } = useMutation({
+    mutationFn: (data: FormData) =>
+      fetcher({ url: "/chats/message", method: "POST", body: data }),
+  });
   const [callData, setCallData] = useState<{
     isOpen: boolean;
     type: "video" | "audio";
@@ -63,10 +116,12 @@ export default function ChatDetails() {
   } = useForm({
     resolver: yupResolver(messageFormSchema),
   });
-  const { chatData, chatError, chatIsLoading } = useChatId(id);
+  const { chatData, chatError, chatIsLoading, refetchChatData } = useChatId(id);
   useTitle(`Chat: ${chatData?.chat.participant.name ?? ""}`);
 
   const messageValue = watch("text");
+  const imageValue = watch("image");
+  const videoValue = watch("video");
 
   useEffect(() => {
     if (messageValue)
@@ -76,11 +131,27 @@ export default function ChatDetails() {
       });
   }, [chatData?.chat.participant.id, currentUserId, messageValue, socket]);
 
+  useEffect(() => {
+    error && enqueueSnackbar("Unable to send message", { variant: "error" });
+    createMessageData && refetchChatData();
+  }, [createMessageData, error, refetchChatData]);
+
   chatError?.status === 404 && notFound();
 
   useTitle(`Chat: ${chatData?.chat.participant.name ?? ""}`);
 
   const endCallHandler = () => setCallData({ isOpen: false, type: "audio" });
+
+  const submitHandler = (data: MessageFormData) => {
+    const formData = new FormData();
+
+    formData.append("text", data.text);
+    data.image?.[0] && formData.append("image", data.image[0]);
+    data.video?.[0] && formData.append("video", data.video[0]);
+    data.voice_note?.[0] && formData.append("voice_note", data.voice_note[0]);
+
+    mutate(formData);
+  };
 
   return (
     <>
@@ -153,8 +224,72 @@ export default function ChatDetails() {
               </div>
               <form
                 onSubmit={handleSubmit(submitHandler)}
-                className="flex flex-col gap-2 bg-tertiary/50 py-1 xs:flex-row sm:flex-col md:flex-row md:items-center"
+                className="relative flex flex-col gap-2 bg-tertiary/50 py-1 xs:flex-row sm:flex-col md:flex-row md:items-center"
               >
+                <>
+                  <div className="absolute inset-x-0 -top-1 grid -translate-y-full gap-1 *:grid *:bg-tertiary/50">
+                    {imageValue?.[0] && (
+                      <label
+                        htmlFor="image"
+                        className={classNames(
+                          "rounded-sm px-2 py-1 border cursor-pointer",
+                          {
+                            "border-red-500": errors.image,
+                            "border-tertiary/50": !errors.image,
+                          },
+                        )}
+                      >
+                        <span>{imageValue[0]?.name}</span>
+                        {errors.image && (
+                          <span className="text-xs text-red-500">
+                            {errors.image?.message}
+                          </span>
+                        )}
+                      </label>
+                    )}
+                    {videoValue?.[0] && (
+                      <label
+                        htmlFor="video"
+                        className={classNames(
+                          "rounded-sm px-2 py-1 border cursor-pointer",
+                          {
+                            "border-red-500": errors.video,
+                            "border-tertiary/50": !errors.video,
+                          },
+                        )}
+                      >
+                        <span>{videoValue[0]?.name}</span>
+                        {errors.video && (
+                          <span className="text-xs text-red-500">
+                            {errors.video?.message}
+                          </span>
+                        )}
+                      </label>
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    {...register("image")}
+                    className="hidden"
+                    id="image"
+                    accept="image/png, image/jpeg, image/jpg"
+                  />
+
+                  <input
+                    type="file"
+                    {...register("video")}
+                    className="hidden"
+                    id="video"
+                    accept="video/mp4, video/mov, video/avi"
+                  />
+
+                  <input
+                    type="file"
+                    {...register("voice_note")}
+                    className="hidden"
+                    id="voice_note"
+                  />
+                </>
                 <textarea
                   {...register("text")}
                   placeholder="Write message here..."
@@ -185,24 +320,32 @@ export default function ChatDetails() {
                         as="div"
                         className="space-y-3 rounded-md bg-base-300 p-2 text-sm *:flex *:w-full *:items-center *:gap-2 *:p-1 *:transition"
                       >
-                        <MenuItem as="button" className="hover:bg-neutral-700">
+                        <MenuItem
+                          as="label"
+                          htmlFor="image"
+                          className="hover:bg-neutral-700"
+                        >
                           <MdAddPhotoAlternate className="text-xl" />
                           <span>Image</span>
                         </MenuItem>
-                        <MenuItem as="button" className="hover:bg-neutral-700">
+                        <MenuItem
+                          as="label"
+                          htmlFor="video"
+                          className="hover:bg-neutral-700"
+                        >
                           <MdVideoLibrary className="text-xl" />
                           <span>Video</span>
-                        </MenuItem>
-                        <MenuItem as="button" className="hover:bg-neutral-700">
-                          <IoDocument className="text-xl" />
-                          <span>Document</span>
                         </MenuItem>
                       </MenuItems>
                     </Transition>
                   </Menu>
                   <GrMicrophone />
                   <button className="grid place-content-center rounded-md bg-secondary p-1 text-2xl">
-                    <FiSend className="" />
+                    {isPending ? (
+                      <span className="dui-loading dui-loading-spinner"></span>
+                    ) : (
+                      <FiSend />
+                    )}
                   </button>
                 </div>
               </form>
