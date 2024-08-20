@@ -13,15 +13,14 @@ import Image from "next/image";
 import { BsThreeDots } from "react-icons/bs";
 import { FaChevronLeft, FaFolder, FaVideo, FaXmark } from "react-icons/fa6";
 
-import { fetcher } from "@/app/helpers/fetcher";
 import { getSocket } from "@/app/helpers/socket";
 import { useAppSelector } from "@/app/hooks/store-hooks";
 import { useChatId } from "@/app/hooks/use-chat-id";
+import useCreateMessage from "@/app/hooks/use-create-message";
 import SoloVideoCall from "@/components/call/solo-video";
 import MessageList from "@/components/messages/message-list";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useTitle } from "@reactuses/core";
-import { useMutation } from "@tanstack/react-query";
 import classNames from "classnames";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
@@ -91,13 +90,11 @@ const messageFormSchema = object({
 export default function ChatDetails() {
   const {
     mutate,
-    data: createMessageData,
-    error,
-    isPending,
-  } = useMutation({
-    mutationFn: (data: FormData) =>
-      fetcher({ url: "/chats/message", method: "POST", body: data }),
-  });
+    createMessageData,
+    createMessageError,
+    createMessageIsPending,
+  } = useCreateMessage();
+
   const [callData, setCallData] = useState<{
     isOpen: boolean;
     type: "video" | "audio";
@@ -113,6 +110,7 @@ export default function ChatDetails() {
     handleSubmit,
     formState: { errors },
     watch,
+    setError,
   } = useForm({
     resolver: yupResolver(messageFormSchema),
   });
@@ -132,9 +130,27 @@ export default function ChatDetails() {
   }, [chatData?.chat.participant.id, currentUserId, messageValue, socket]);
 
   useEffect(() => {
-    error && enqueueSnackbar("Unable to send message", { variant: "error" });
+    createMessageError?.errorMessage &&
+      enqueueSnackbar(createMessageError?.errorMessage, { variant: "error" });
     createMessageData && refetchChatData();
-  }, [createMessageData, error, refetchChatData]);
+
+    if (createMessageError?.message) {
+      createMessageError.message.text &&
+        setError("text", { message: createMessageError.message.text.message });
+      createMessageError.message.image &&
+        setError("image", {
+          message: createMessageError.message.image.message,
+        });
+      createMessageError.message.video &&
+        setError("video", {
+          message: createMessageError.message.video.message,
+        });
+      createMessageError.message.voice_note &&
+        setError("voice_note", {
+          message: createMessageError.message.voice_note.message,
+        });
+    }
+  }, [createMessageData, createMessageError, refetchChatData, setError]);
 
   chatError?.status === 404 && notFound();
 
@@ -341,7 +357,7 @@ export default function ChatDetails() {
                   </Menu>
                   <GrMicrophone />
                   <button className="grid place-content-center rounded-md bg-secondary p-1 text-2xl">
-                    {isPending ? (
+                    {createMessageIsPending ? (
                       <span className="dui-loading dui-loading-spinner"></span>
                     ) : (
                       <FiSend />
