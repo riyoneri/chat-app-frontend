@@ -18,7 +18,7 @@ interface ResponseError {
   message: Partial<MessageFormData>;
 }
 
-export default function useCreateMessage() {
+export default function useCreateMessage(chatId: string) {
   const {
     mutate,
     data: createMessageData,
@@ -26,7 +26,7 @@ export default function useCreateMessage() {
     isPending: createMessageIsPending,
   } = useMutation<object, ResponseError, FormData>({
     mutationFn: (data: FormData) =>
-      fetcher({ url: "/chats/message", method: "POST", body: data }),
+      fetcher({ url: `/chats/message/${chatId}`, method: "POST", body: data }),
   });
 
   return {
