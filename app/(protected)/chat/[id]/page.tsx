@@ -70,9 +70,9 @@ const messageFormSchema = object({
     )
     .test(
       "fileSize",
-      "Video size must be less or equal to 10MB",
+      "Video size must be less or equal to 5MB",
       (fileList) =>
-        fileList && ![...fileList].some((file) => file.size > 10_000_000),
+        fileList && ![...fileList].some((file) => file.size > 5_000_000),
     ),
   voice_note: mixed(
     (input): input is FileList => input instanceof FileList,
@@ -88,12 +88,13 @@ const messageFormSchema = object({
 });
 
 export default function ChatDetails() {
+  const { id } = useParams<{ id: string }>();
   const {
     mutate,
     createMessageData,
     createMessageError,
     createMessageIsPending,
-  } = useCreateMessage();
+  } = useCreateMessage(id);
 
   const [callData, setCallData] = useState<{
     isOpen: boolean;
@@ -104,13 +105,13 @@ export default function ChatDetails() {
   });
   const socket = getSocket();
   const currentUserId = useAppSelector((state) => state.auth.id);
-  const { id } = useParams<{ id: string }>();
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
     setError,
+    reset,
   } = useForm({
     resolver: yupResolver(messageFormSchema),
   });
@@ -132,7 +133,10 @@ export default function ChatDetails() {
   useEffect(() => {
     createMessageError?.errorMessage &&
       enqueueSnackbar(createMessageError?.errorMessage, { variant: "error" });
-    createMessageData && refetchChatData();
+    if (createMessageData) {
+      reset();
+      refetchChatData();
+    }
 
     if (createMessageError?.message) {
       createMessageError.message.text &&
@@ -150,7 +154,7 @@ export default function ChatDetails() {
           message: createMessageError.message.voice_note.message,
         });
     }
-  }, [createMessageData, createMessageError, refetchChatData, setError]);
+  }, [createMessageData, createMessageError, refetchChatData, reset, setError]);
 
   chatError?.status === 404 && notFound();
 
@@ -356,7 +360,10 @@ export default function ChatDetails() {
                     </Transition>
                   </Menu>
                   <GrMicrophone />
-                  <button className="grid place-content-center rounded-md bg-secondary p-1 text-2xl">
+                  <button
+                    disabled={createMessageIsPending}
+                    className="grid place-content-center rounded-md bg-secondary p-1 text-2xl"
+                  >
                     {createMessageIsPending ? (
                       <span className="dui-loading dui-loading-spinner"></span>
                     ) : (
