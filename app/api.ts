@@ -12,9 +12,11 @@ interface MessageDto {
   id: string;
   chatId: string;
   senderId: string;
-  content: string;
+  text: string;
   state: "pending" | "delivered" | "seen";
   createdAt: string;
+  updatedAt: string;
+  files: { name: string; type: FileType }[];
 }
 
 enum FileType {
