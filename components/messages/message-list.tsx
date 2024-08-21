@@ -1,4 +1,4 @@
-import MessagesListItem from "../messages-list-item";
+import MessagesListItem from "./messages-list-item";
 
 export default function MessageList({ messages }: { messages: MessageDto[] }) {
   return (
