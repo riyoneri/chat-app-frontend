@@ -94,10 +94,17 @@ export default function ChatSection({ className }: { className?: string }) {
             (previousActiveChat) => previousActiveChat.userId !== client.userId,
           ),
         ),
-      );
+      )
+      .on("message:new", () => {
+        chatsRefetch();
+      });
 
     return () => {
-      socket.off("chat:create").off("chat:active").off("chat:inactive");
+      socket
+        .off("chat:create")
+        .off("chat:active")
+        .off("chat:inactive")
+        .off("message:new");
     };
   }, [allUsersRefetch, chats, chatsRefetch, socket]);
 
