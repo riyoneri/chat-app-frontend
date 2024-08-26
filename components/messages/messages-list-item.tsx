@@ -12,9 +12,12 @@ export default function MessagesListItem({
   senderId,
   state,
   createdAt,
-}: MessageDto) {
+  displayDate,
+}: MessageDto & { displayDate: boolean }) {
   const currentUserId = useAppSelector((state) => state.auth.id);
   const date = dayjs(createdAt);
+  const showDateAndState =
+    (displayDate && !date.isSame(dayjs())) || date.isSame(dayjs());
 
   return (
     <div
@@ -26,22 +29,24 @@ export default function MessagesListItem({
       <div className="dui-chat-bubble min-h-0 rounded-md px-2 py-1 ">
         {text}
       </div>
-      <span className="dui-chat-footer flex select-none items-center gap-2">
-        <span className="text-xs">{date.format("H:mm")}</span>
-        {senderId === "1" && (
-          <>
-            {state === "pending" && <FaRegClock className="opacity-50" />}
-            {state !== "pending" && (
-              <RiCheckDoubleLine
-                className={classNames("text-xl", {
-                  "text-secondary": state === "seen",
-                  "opacity-50": state === "delivered",
-                })}
-              />
-            )}
-          </>
-        )}
-      </span>
+      {showDateAndState && (
+        <span className="dui-chat-footer flex select-none items-center gap-2">
+          <span className="text-xs">{date.format("H:mm")}</span>
+          {senderId === currentUserId && (
+            <>
+              {state === "pending" && <FaRegClock className="opacity-50" />}
+              {state !== "pending" && (
+                <RiCheckDoubleLine
+                  className={classNames("text-xl", {
+                    "text-secondary": state === "seen",
+                    "opacity-50": state === "delivered",
+                  })}
+                />
+              )}
+            </>
+          )}
+        </span>
+      )}
     </div>
   );
 }
