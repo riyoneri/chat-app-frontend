@@ -110,6 +110,7 @@ export default function ChatDetails() {
     handleSubmit,
     formState: { errors },
     watch,
+    getFieldState,
     setError,
     reset,
   } = useForm({
@@ -118,17 +119,33 @@ export default function ChatDetails() {
   const { chatData, chatError, chatIsLoading, refetchChatData } = useChatId(id);
   useTitle(`Chat: ${chatData?.chat.participant.name ?? ""}`);
 
-  const messageValue = watch("text");
+  const textValue = watch("text");
+  const { isTouched } = getFieldState("text");
   const imageValue = watch("image");
   const videoValue = watch("video");
 
   useEffect(() => {
-    if (messageValue)
+    if (textValue || isTouched)
       socket.emit("chat:typing", {
         receiver: chatData?.chat.participant.id,
         sender: currentUserId,
       });
-  }, [chatData?.chat.participant.id, currentUserId, messageValue, socket]);
+
+    socket.on("message:new", () => {
+      refetchChatData();
+    });
+
+    return () => {
+      socket.off("message:new");
+    };
+  }, [
+    chatData?.chat.participant.id,
+    currentUserId,
+    isTouched,
+    refetchChatData,
+    socket,
+    textValue,
+  ]);
 
   useEffect(() => {
     createMessageError?.errorMessage &&
